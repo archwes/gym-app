@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  UserCircle,
 } from 'lucide-react';
 
 const trainerLinks = [
@@ -137,6 +138,18 @@ export default function Sidebar() {
 
         {/* Bottom actions */}
         <div className="p-3 border-t border-dark-lighter space-y-1">
+          <Link
+            href="/perfil"
+            onClick={() => setSidebarOpen(false)}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              pathname === '/perfil'
+                ? 'bg-primary/10 text-primary border border-primary/20'
+                : 'text-gray hover:text-gray-lighter hover:bg-dark-lighter/50'
+            }`}
+          >
+            <UserCircle size={20} />
+            <span>Meu Perfil</span>
+          </Link>
           <Link
             href="/notificacoes"
             onClick={() => setSidebarOpen(false)}

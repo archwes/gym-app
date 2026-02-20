@@ -55,6 +55,12 @@ interface AppState {
   // Progress actions
   addProgress: (data: Partial<StudentProgress>) => Promise<void>;
 
+  // Student management
+  addStudent: (data: { email: string; name?: string; phone?: string }) => Promise<{ created: boolean; tempPassword?: string; message: string }>;
+
+  // Profile
+  updateProfile: (data: { name?: string; phone?: string; avatar?: string }) => Promise<void>;
+
   // Notification actions
   markNotificationRead: (id: string) => Promise<void>;
   markAllNotificationsRead: () => Promise<void>;
@@ -196,6 +202,19 @@ export const useAppStore = create<AppState>((set, get) => ({
   addProgress: async (data) => {
     await api.apiCreateProgress(data);
     await get().fetchProgress(data.student_id);
+  },
+
+  addStudent: async (data) => {
+    const result = await api.apiAddStudent(data);
+    await get().fetchUsers();
+    return result;
+  },
+
+  updateProfile: async (data) => {
+    const user = get().currentUser;
+    if (!user) throw new Error('Não logado');
+    const updated = await api.apiUpdateUser(user.id, data);
+    set({ currentUser: { ...user, ...updated } });
   },
 
   markNotificationRead: async (id) => {

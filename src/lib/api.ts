@@ -103,6 +103,31 @@ export async function apiGetUser(id: string): Promise<User> {
   return request<User>(`/api/users/${id}`);
 }
 
+export async function apiSearchStudents(q: string): Promise<User[]> {
+  return request<User[]>(`/api/users/search?q=${encodeURIComponent(q)}`);
+}
+
+export async function apiAddStudent(data: { email: string; name?: string; phone?: string }): Promise<{ user: User; created: boolean; tempPassword?: string; message: string }> {
+  return request<{ user: User; created: boolean; tempPassword?: string; message: string }>('/api/users/add-student', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function apiUpdateUser(id: string, data: { name?: string; phone?: string; avatar?: string }): Promise<User> {
+  return request<User>(`/api/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function apiChangePassword(oldPassword: string, newPassword: string): Promise<void> {
+  await request('/api/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+}
+
 // --- Exercises ---
 export async function apiGetExercises(params?: {
   muscle_group?: string;
