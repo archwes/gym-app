@@ -11,6 +11,8 @@ import {
   X, UserPlus, Check, Copy, Loader2, AlertCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
 import { formatPhone } from '@/lib/format';
 
 export default function AlunosPage() {
@@ -235,20 +237,12 @@ export default function AlunosPage() {
       )}
 
       {/* ===== Add Student Modal ===== */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
-          <div className="relative w-full max-w-lg rounded-2xl bg-dark-light border border-dark-lighter p-6 shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-gray-lighter flex items-center gap-2">
-                <UserPlus size={20} className="text-primary" /> Adicionar Aluno
-              </h2>
-              <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-dark-lighter text-gray hover:text-gray-lighter transition-colors">
-                <X size={20} />
-              </button>
-            </div>
-
+      <Modal
+        isOpen={showModal}
+        onClose={closeModal}
+        title="Adicionar Aluno"
+      >
+        <div className="space-y-4">
             {/* Success state */}
             {successMsg ? (
               <div className="space-y-4">
@@ -276,17 +270,14 @@ export default function AlunosPage() {
                     <p className="text-gray text-[11px] mt-2">Anote e envie esta senha ao aluno. Ele poderá alterá-la nas configurações.</p>
                   </div>
                 )}
-                <button
-                  onClick={closeModal}
-                  className="w-full py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors"
-                >
-                  Fechar
-                </button>
+                <div className="flex justify-end pt-2">
+                  <Button onClick={closeModal}>Fechar</Button>
+                </div>
               </div>
             ) : (
               <>
                 {/* Tabs */}
-                <div className="flex gap-1 mb-5 p-1 rounded-xl bg-dark/50">
+                <div className="flex gap-1 mb-1 p-1 rounded-xl bg-dark/50">
                   <button
                     onClick={() => setTab('search')}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -306,7 +297,7 @@ export default function AlunosPage() {
                 </div>
 
                 {errorMsg && (
-                  <div className="mb-4 p-3 rounded-xl bg-danger/10 border border-danger/20 flex items-center gap-2 text-danger text-sm">
+                  <div className="p-3 rounded-xl bg-danger/10 border border-danger/20 flex items-center gap-2 text-danger text-sm">
                     <AlertCircle size={16} /> {errorMsg}
                   </div>
                 )}
@@ -321,7 +312,7 @@ export default function AlunosPage() {
                         placeholder="Buscar por nome ou e-mail..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray focus:outline-none focus:border-primary"
                         autoFocus
                       />
                       {searching && <Loader2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" />}
@@ -373,53 +364,56 @@ export default function AlunosPage() {
                 {tab === 'new' && (
                   <form onSubmit={handleCreateStudent} className="space-y-4">
                     <div>
-                      <label className="block text-xs text-gray font-medium mb-1.5">Nome do aluno *</label>
+                      <label className="block text-xs font-medium text-gray mb-1.5">Nome do aluno *</label>
                       <input
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         placeholder="Ex: João Silva"
                         required
-                        className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
+                        className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-gray font-medium mb-1.5">E-mail do aluno *</label>
+                      <label className="block text-xs font-medium text-gray mb-1.5">E-mail do aluno *</label>
                       <input
                         type="email"
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
                         placeholder="aluno@email.com"
                         required
-                        className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
+                        className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-gray font-medium mb-1.5">Telefone (opcional)</label>
+                      <label className="block text-xs font-medium text-gray mb-1.5">Telefone (opcional)</label>
                       <input
                         type="tel"
                         value={newPhone}
                         onChange={(e) => setNewPhone(formatPhone(e.target.value))}
                         placeholder="(11) 99999-9999"
-                        className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
+                        className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary"
                       />
                     </div>
                     <p className="text-gray text-[11px]">Uma senha temporária será gerada automaticamente. Envie ao aluno para que ele possa acessar a plataforma.</p>
-                    <button
-                      type="submit"
-                      disabled={submitting || !newName.trim() || !newEmail.trim()}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold text-sm hover:shadow-lg hover:shadow-primary/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {submitting ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
-                      Criar Conta do Aluno
-                    </button>
+                    <div className="flex justify-end gap-2 pt-2">
+                      <Button variant="outline" onClick={closeModal} type="button">
+                        Cancelar
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={submitting || !newName.trim() || !newEmail.trim()}
+                      >
+                        {submitting ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
+                        Criar Aluno
+                      </Button>
+                    </div>
                   </form>
                 )}
               </>
             )}
-          </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

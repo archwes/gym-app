@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { apiChangePassword } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
+import Button from '@/components/ui/Button';
 import { User, Save, Lock, Check, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { formatPhone } from '@/lib/format';
 
@@ -119,39 +120,39 @@ export default function PerfilPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray font-medium mb-1.5">Nome</label>
+              <label className="block text-xs font-medium text-gray mb-1.5">Nome</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:outline-none focus:border-primary/50"
+                className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray font-medium mb-1.5">E-mail</label>
+              <label className="block text-xs font-medium text-gray mb-1.5">E-mail</label>
               <input
                 type="email"
                 value={currentUser.email}
                 disabled
-                className="w-full px-4 py-2.5 rounded-xl bg-dark/50 border border-dark-lighter text-gray/60 text-sm cursor-not-allowed"
+                className="w-full bg-dark/50 border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray/60 cursor-not-allowed"
               />
               <p className="text-gray/50 text-[11px] mt-1">O e-mail não pode ser alterado</p>
             </div>
 
             <div>
-              <label className="block text-xs text-gray font-medium mb-1.5">Telefone</label>
+              <label className="block text-xs font-medium text-gray mb-1.5">Telefone</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(formatPhone(e.target.value))}
                 placeholder="(11) 99999-9999"
-                className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
+                className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray font-medium mb-2">Avatar</label>
+              <label className="block text-xs font-medium text-gray mb-2">Avatar</label>
               <div className="flex flex-wrap gap-2">
                 {avatarOptions.map((emoji) => (
                   <button
@@ -171,14 +172,11 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="mt-5 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold text-sm hover:shadow-lg hover:shadow-primary/25 transition-all disabled:opacity-50"
-          >
-            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-            Salvar Alterações
-          </button>
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={saving} icon={saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}>
+              Salvar Alterações
+            </Button>
+          </div>
         </form>
 
         {/* Password Change */}
@@ -200,14 +198,14 @@ export default function PerfilPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray font-medium mb-1.5">Senha atual</label>
+              <label className="block text-xs font-medium text-gray mb-1.5">Senha atual</label>
               <div className="relative">
                 <input
                   type={showOld ? 'text' : 'password'}
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2.5 pr-10 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:outline-none focus:border-primary/50"
+                  className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 pr-10 text-sm text-gray-lighter focus:outline-none focus:border-primary"
                 />
                 <button type="button" onClick={() => setShowOld(!showOld)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter">
                   {showOld ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -216,7 +214,7 @@ export default function PerfilPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-gray font-medium mb-1.5">Nova senha</label>
+              <label className="block text-xs font-medium text-gray mb-1.5">Nova senha</label>
               <div className="relative">
                 <input
                   type={showNew ? 'text' : 'password'}
@@ -224,7 +222,7 @@ export default function PerfilPage() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Mínimo 6 caracteres"
                   required
-                  className="w-full px-4 py-2.5 pr-10 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
+                  className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 pr-10 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary"
                 />
                 <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter">
                   {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -233,14 +231,14 @@ export default function PerfilPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-gray font-medium mb-1.5">Confirmar nova senha</label>
+              <label className="block text-xs font-medium text-gray mb-1.5">Confirmar nova senha</label>
               <div className="relative">
                 <input
                   type={showConfirm ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2.5 pr-10 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:outline-none focus:border-primary/50"
+                  className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 pr-10 text-sm text-gray-lighter focus:outline-none focus:border-primary"
                 />
                 <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter">
                   {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -249,14 +247,11 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={changingPassword || !oldPassword || !newPassword || !confirmPassword}
-            className="mt-5 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-secondary text-white font-semibold text-sm hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {changingPassword ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
-            Alterar Senha
-          </button>
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={changingPassword || !oldPassword || !newPassword || !confirmPassword} icon={changingPassword ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}>
+              Alterar Senha
+            </Button>
+          </div>
         </form>
       </div>
     </div>
