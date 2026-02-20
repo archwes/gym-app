@@ -24,6 +24,7 @@ export default function PerfilPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -97,7 +98,7 @@ export default function PerfilPage() {
         icon={<User size={24} />}
       />
 
-      <div className="max-w-2xl space-y-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Profile Info */}
         <form onSubmit={handleProfileSave} className="rounded-2xl bg-dark-light border border-dark-lighter p-6">
           <h3 className="text-base font-bold text-gray-lighter mb-4 flex items-center gap-2">
@@ -232,13 +233,18 @@ export default function PerfilPage() {
 
             <div>
               <label className="block text-xs text-gray font-medium mb-1.5">Confirmar nova senha</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:outline-none focus:border-primary/50"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 pr-10 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:outline-none focus:border-primary/50"
+                />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter">
+                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
           </div>
 
