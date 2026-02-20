@@ -42,6 +42,7 @@ export default function MeusTreinosPage() {
   const [feedbackObs, setFeedbackObs] = useState('');
   const [sendingFeedback, setSendingFeedback] = useState(false);
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [finalElapsed, setFinalElapsed] = useState(0);
 
   useEffect(() => {
     if (!currentUser || currentUser.role !== 'student') {
@@ -104,6 +105,10 @@ export default function MeusTreinosPage() {
   };
 
   const finishWorkout = () => {
+    // Freeze the timer immediately
+    const frozenTime = workoutStartTime ? Math.floor((Date.now() - workoutStartTime) / 1000) : elapsed;
+    setFinalElapsed(frozenTime);
+    setWorkoutStartTime(null);
     setRestActive(false);
     setRestTimer(0);
     setFeedbackRating(0);
@@ -119,7 +124,7 @@ export default function MeusTreinosPage() {
     try {
       await apiSendWorkoutFeedback({
         workoutPlanId: activeWorkout,
-        duration: formatTime(elapsed),
+        duration: formatTime(finalElapsed),
         rating: feedbackRating,
         intensity: feedbackIntensity,
         observations: feedbackObs,
@@ -131,6 +136,7 @@ export default function MeusTreinosPage() {
         setWorkoutStartTime(null);
         setCompletedExercises({});
         setElapsed(0);
+        setFinalElapsed(0);
         setShowFinishMsg(false);
       }, 1500);
     } catch {
@@ -140,6 +146,7 @@ export default function MeusTreinosPage() {
       setWorkoutStartTime(null);
       setCompletedExercises({});
       setElapsed(0);
+      setFinalElapsed(0);
     } finally {
       setSendingFeedback(false);
     }
@@ -153,6 +160,7 @@ export default function MeusTreinosPage() {
       setWorkoutStartTime(null);
       setCompletedExercises({});
       setElapsed(0);
+      setFinalElapsed(0);
       setShowFinishMsg(false);
     }, 2000);
   };
@@ -225,7 +233,7 @@ export default function MeusTreinosPage() {
         <div className="mb-6 p-6 rounded-2xl bg-gradient-to-r from-secondary/10 to-accent/10 border border-secondary/20 text-center animate-fade-in">
           <Trophy size={40} className="text-accent mx-auto mb-3" />
           <h3 className="text-lg font-bold text-gray-lighter mb-1">Treino Finalizado!</h3>
-          <p className="text-sm text-gray">Tempo total: {formatTime(elapsed)}</p>
+          <p className="text-sm text-gray">Tempo total: {formatTime(finalElapsed)}</p>
         </div>
       )}
 
@@ -405,7 +413,7 @@ export default function MeusTreinosPage() {
                             </div>
                             <div>
                               <p className="text-xs text-gray font-medium">Tempo de treino</p>
-                              <p className="text-2xl font-bold text-gray-lighter font-mono">{formatTime(elapsed)}</p>
+                              <p className="text-2xl font-bold text-gray-lighter font-mono">{formatTime(finalElapsed)}</p>
                             </div>
                           </div>
 
