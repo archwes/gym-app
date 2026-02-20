@@ -41,6 +41,13 @@ interface AppState {
     exercises: { exercise_id: string; sets: number; reps: string; rest_seconds: number; weight?: string }[];
   }) => Promise<void>;
   deleteWorkoutPlan: (id: string) => Promise<void>;
+  updateWorkoutPlan: (id: string, data: {
+    name?: string;
+    description?: string;
+    day_of_week?: string[];
+    is_active?: boolean;
+    exercises?: { exercise_id: string; sets: number; reps: string; rest_seconds: number; weight?: string }[];
+  }) => Promise<void>;
 
   // Session actions
   addSession: (data: {
@@ -183,6 +190,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => ({
       workoutPlans: state.workoutPlans.filter((p) => p.id !== id),
     }));
+  },
+
+  updateWorkoutPlan: async (id, data) => {
+    await api.apiUpdateWorkout(id, data);
+    await get().fetchWorkouts();
   },
 
   addSession: async (data) => {

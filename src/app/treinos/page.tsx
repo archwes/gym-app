@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
+import { WorkoutPlan } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
@@ -15,9 +16,10 @@ import {
   Clock,
   Target,
   Filter,
+  Pencil,
 } from 'lucide-react';
 
-interface NewPlanExercise {
+interface PlanExercise {
   exercise_id: string;
   exercise_name: string;
   muscle_group: string;
@@ -28,16 +30,26 @@ interface NewPlanExercise {
 }
 
 export default function TreinosPage() {
-  const { currentUser, users, workoutPlans, exercises, addWorkoutPlan, deleteWorkoutPlan, fetchUsers, fetchWorkouts, fetchExercises } = useAppStore();
+  const { currentUser, users, workoutPlans, exercises, addWorkoutPlan, deleteWorkoutPlan, updateWorkoutPlan, fetchUsers, fetchWorkouts, fetchExercises } = useAppStore();
   const router = useRouter();
   const [selectedStudent, setSelectedStudent] = useState<string>('all');
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
+
+  // New plan modal state
   const [showNewPlanModal, setShowNewPlanModal] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
   const [newPlanDesc, setNewPlanDesc] = useState('');
   const [newPlanStudent, setNewPlanStudent] = useState('');
   const [newPlanDays, setNewPlanDays] = useState<string[]>([]);
-  const [newPlanExercises, setNewPlanExercises] = useState<NewPlanExercise[]>([]);
+  const [newPlanExercises, setNewPlanExercises] = useState<PlanExercise[]>([]);
+
+  // Edit plan modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editPlanId, setEditPlanId] = useState('');
+  const [editPlanName, setEditPlanName] = useState('');
+  const [editPlanDesc, setEditPlanDesc] = useState('');
+  const [editPlanDays, setEditPlanDays] = useState<string[]>([]);
+  const [editPlanExercises, setEditPlanExercises] = useState<PlanExercise[]>([]);
 
   useEffect(() => {
     if (!currentUser || currentUser.role !== 'trainer') {
@@ -60,22 +72,27 @@ export default function TreinosPage() {
 
   const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
-  const addExerciseToPlan = (exerciseId: string) => {
+  const addExerciseToList = (exerciseId: string, list: PlanExercise[], setList: (l: PlanExercise[]) => void) => {
     const exercise = exercises.find((e) => e.id === exerciseId);
     if (!exercise) return;
-    setNewPlanExercises([
-      ...newPlanExercises,
+    setList([
+      ...list,
       { exercise_id: exerciseId, exercise_name: exercise.name, muscle_group: exercise.muscle_group, sets: 3, reps: '10-12', rest_seconds: 60 },
     ]);
   };
 
-  const removeExerciseFromPlan = (index: number) => {
-    setNewPlanExercises(newPlanExercises.filter((_, i) => i !== index));
+  const removeExerciseFromList = (index: number, list: PlanExercise[], setList: (l: PlanExercise[]) => void) => {
+    setList(list.filter((_, i) => i !== index));
+  };
+
+  const updateExerciseInList = (index: number, field: keyof PlanExercise, value: string | number, list: PlanExercise[], setList: (l: PlanExercise[]) => void) => {
+    const updated = [...list];
+    updated[index] = { ...updated[index], [field]: value };
+    setList(updated);
   };
 
   const handleCreatePlan = async () => {
     if (!newPlanName || !newPlanStudent || newPlanExercises.length === 0) return;
-
     await addWorkoutPlan({
       name: newPlanName,
       description: newPlanDesc,
@@ -97,9 +114,168 @@ export default function TreinosPage() {
     setNewPlanExercises([]);
   };
 
+  const openEditModal = (plan: WorkoutPlan) => {
+    setEditPlanId(plan.id);
+    setEditPlanName(plan.name);
+    setEditPlanDesc(plan.description || '');
+    setEditPlanDays(parseDays(plan.day_of_week));
+    setEditPlanExercises(
+      plan.exercises.map((ex) => ({
+        exercise_id: ex.exercise_id,
+        exercise_name: ex.exercise_name,
+        muscle_group: ex.muscle_group,
+        sets: ex.sets,
+        reps: ex.reps,
+        rest_seconds: ex.rest_seconds,
+        weight: ex.weight,
+      }))
+    );
+    setShowEditModal(true);
+  };
+
+  const handleUpdatePlan = async () => {
+    if (!editPlanName || editPlanExercises.length === 0) return;
+    await updateWorkoutPlan(editPlanId, {
+      name: editPlanName,
+      description: editPlanDesc,
+      day_of_week: editPlanDays,
+      exercises: editPlanExercises.map((ex) => ({
+        exercise_id: ex.exercise_id,
+        sets: ex.sets,
+        reps: ex.reps,
+        rest_seconds: ex.rest_seconds,
+        weight: ex.weight,
+      })),
+    });
+    setShowEditModal(false);
+  };
+
   const parseDays = (dayOfWeek: string): string[] => {
     try { return JSON.parse(dayOfWeek); } catch { return []; }
   };
+
+  // Shared exercise form builder
+  const renderExerciseForm = (
+    exList: PlanExercise[],
+    setExList: (l: PlanExercise[]) => void,
+  ) => (
+    <>
+      <div>
+        <label className="block text-xs font-medium text-gray mb-1.5">Adicionar Exercício</label>
+        <select
+          onChange={(e) => {
+            if (e.target.value) {
+              addExerciseToList(e.target.value, exList, setExList);
+              e.target.value = '';
+            }
+          }}
+          className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+        >
+          <option value="">Selecione um exercício</option>
+          {exercises.map((ex) => (
+            <option key={ex.id} value={ex.id}>
+              {ex.name} ({ex.muscle_group})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {exList.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-[11px] text-gray font-medium uppercase tracking-wider">Exercícios ({exList.length})</p>
+          {exList.map((ex, idx) => (
+            <div key={idx} className="p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-primary w-5">{idx + 1}</span>
+                <span className="flex-1 text-sm text-gray-lighter font-medium truncate">{ex.exercise_name}</span>
+                <span className="text-[10px] text-gray bg-dark-lighter px-1.5 py-0.5 rounded">{ex.muscle_group}</span>
+                <button
+                  type="button"
+                  onClick={() => removeExerciseFromList(idx, exList, setExList)}
+                  className="p-1 text-gray hover:text-danger transition-colors"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1">
+                  <label className="text-[10px] text-gray">Séries</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={ex.sets}
+                    onChange={(e) => updateExerciseInList(idx, 'sets', Number(e.target.value), exList, setExList)}
+                    className="w-14 bg-dark border border-dark-lighter rounded-lg px-2 py-1 text-xs text-center text-gray-lighter"
+                  />
+                </div>
+                <span className="text-xs text-gray">x</span>
+                <div className="flex items-center gap-1">
+                  <label className="text-[10px] text-gray">Reps</label>
+                  <input
+                    type="text"
+                    value={ex.reps}
+                    onChange={(e) => updateExerciseInList(idx, 'reps', e.target.value, exList, setExList)}
+                    className="w-16 bg-dark border border-dark-lighter rounded-lg px-2 py-1 text-xs text-center text-gray-lighter"
+                  />
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock size={12} className="text-gray" />
+                  <input
+                    type="number"
+                    min={0}
+                    step={5}
+                    value={ex.rest_seconds}
+                    onChange={(e) => updateExerciseInList(idx, 'rest_seconds', Number(e.target.value), exList, setExList)}
+                    className="w-16 bg-dark border border-dark-lighter rounded-lg px-2 py-1 text-xs text-center text-gray-lighter"
+                  />
+                  <label className="text-[10px] text-gray">seg</label>
+                </div>
+                <div className="flex items-center gap-1">
+                  <label className="text-[10px] text-gray">Peso</label>
+                  <input
+                    type="text"
+                    value={ex.weight || ''}
+                    onChange={(e) => updateExerciseInList(idx, 'weight', e.target.value, exList, setExList)}
+                    placeholder="kg"
+                    className="w-16 bg-dark border border-dark-lighter rounded-lg px-2 py-1 text-xs text-center text-gray-lighter placeholder:text-gray/40"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+
+  // Shared days selector
+  const renderDays = (selectedDays: string[], setDays: (d: string[]) => void) => (
+    <div>
+      <label className="block text-xs font-medium text-gray mb-1.5">Dias da Semana</label>
+      <div className="flex flex-wrap gap-2">
+        {days.map((day) => (
+          <button
+            key={day}
+            type="button"
+            onClick={() =>
+              setDays(
+                selectedDays.includes(day)
+                  ? selectedDays.filter((d) => d !== day)
+                  : [...selectedDays, day]
+              )
+            }
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              selectedDays.includes(day)
+                ? 'bg-primary text-white'
+                : 'bg-dark border border-dark-lighter text-gray hover:text-gray-lighter'
+            }`}
+          >
+            {day.substring(0, 3)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div>
@@ -204,7 +380,7 @@ export default function TreinosPage() {
                             </span>
                             {ex.weight && <span>💪 {ex.weight}</span>}
                             <span className="flex items-center gap-1">
-                              <Clock size={12} /> {ex.rest_seconds}s
+                              <Clock size={12} /> {ex.rest_seconds}s descanso
                             </span>
                           </div>
                         </div>
@@ -214,7 +390,15 @@ export default function TreinosPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-end">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      icon={<Pencil size={14} />}
+                      onClick={() => openEditModal(plan)}
+                    >
+                      Editar
+                    </Button>
                     <Button
                       variant="danger"
                       size="sm"
@@ -275,90 +459,8 @@ export default function TreinosPage() {
             </select>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Dias da Semana</label>
-            <div className="flex flex-wrap gap-2">
-              {days.map((day) => (
-                <button
-                  key={day}
-                  onClick={() =>
-                    setNewPlanDays(
-                      newPlanDays.includes(day)
-                        ? newPlanDays.filter((d) => d !== day)
-                        : [...newPlanDays, day]
-                    )
-                  }
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    newPlanDays.includes(day)
-                      ? 'bg-primary text-white'
-                      : 'bg-dark border border-dark-lighter text-gray hover:text-gray-lighter'
-                  }`}
-                >
-                  {day.substring(0, 3)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Adicionar Exercício</label>
-            <select
-              onChange={(e) => {
-                if (e.target.value) {
-                  addExerciseToPlan(e.target.value);
-                  e.target.value = '';
-                }
-              }}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
-            >
-              <option value="">Selecione um exercício</option>
-              {exercises.map((ex) => (
-                <option key={ex.id} value={ex.id}>
-                  {ex.name} ({ex.muscle_group})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {newPlanExercises.length > 0 && (
-            <div className="space-y-2">
-              {newPlanExercises.map((ex, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-2 rounded-lg bg-dark/50 border border-dark-lighter/50">
-                  <span className="text-xs font-bold text-gray w-5">{idx + 1}</span>
-                  <span className="flex-1 text-sm text-gray-lighter truncate">{ex.exercise_name}</span>
-                  <input
-                    type="number"
-                    value={ex.sets}
-                    onChange={(e) => {
-                      const updated = [...newPlanExercises];
-                      updated[idx] = { ...updated[idx], sets: Number(e.target.value) };
-                      setNewPlanExercises(updated);
-                    }}
-                    className="w-14 bg-dark border border-dark-lighter rounded-lg px-2 py-1 text-xs text-center text-gray-lighter"
-                    placeholder="Sets"
-                  />
-                  <span className="text-xs text-gray">x</span>
-                  <input
-                    type="text"
-                    value={ex.reps}
-                    onChange={(e) => {
-                      const updated = [...newPlanExercises];
-                      updated[idx] = { ...updated[idx], reps: e.target.value };
-                      setNewPlanExercises(updated);
-                    }}
-                    className="w-16 bg-dark border border-dark-lighter rounded-lg px-2 py-1 text-xs text-center text-gray-lighter"
-                    placeholder="Reps"
-                  />
-                  <button
-                    onClick={() => removeExerciseFromPlan(idx)}
-                    className="p-1 text-gray hover:text-danger transition-colors"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+          {renderDays(newPlanDays, setNewPlanDays)}
+          {renderExerciseForm(newPlanExercises, setNewPlanExercises)}
 
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={() => setShowNewPlanModal(false)}>
@@ -369,6 +471,51 @@ export default function TreinosPage() {
               disabled={!newPlanName || !newPlanStudent || newPlanExercises.length === 0}
             >
               Criar Treino
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit Plan Modal */}
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title="Editar Treino"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-gray mb-1.5">Nome do Treino</label>
+            <input
+              type="text"
+              value={editPlanName}
+              onChange={(e) => setEditPlanName(e.target.value)}
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray mb-1.5">Descrição</label>
+            <textarea
+              value={editPlanDesc}
+              onChange={(e) => setEditPlanDesc(e.target.value)}
+              rows={2}
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary resize-none"
+            />
+          </div>
+
+          {renderDays(editPlanDays, setEditPlanDays)}
+          {renderExerciseForm(editPlanExercises, setEditPlanExercises)}
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowEditModal(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleUpdatePlan}
+              disabled={!editPlanName || editPlanExercises.length === 0}
+            >
+              Salvar Alterações
             </Button>
           </div>
         </div>

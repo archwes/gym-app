@@ -171,6 +171,19 @@ export async function apiDeleteWorkout(id: string): Promise<void> {
   await request(`/api/workouts/${id}`, { method: 'DELETE' });
 }
 
+export async function apiUpdateWorkout(id: string, data: {
+  name?: string;
+  description?: string;
+  day_of_week?: string[];
+  is_active?: boolean;
+  exercises?: { exercise_id: string; sets: number; reps: string; rest_seconds: number; weight?: string }[];
+}): Promise<WorkoutPlan> {
+  return request<WorkoutPlan>(`/api/workouts/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
 export async function apiCompleteExercise(
   workoutId: string,
   exerciseId: string

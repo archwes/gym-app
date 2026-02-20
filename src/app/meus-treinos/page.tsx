@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import PageHeader from '@/components/ui/PageHeader';
@@ -12,13 +12,23 @@ import {
   Target,
   CheckCircle2,
   Circle,
+  Play,
+  Square,
+  Timer,
+  Trophy,
 } from 'lucide-react';
 
 export default function MeusTreinosPage() {
   const { currentUser, workoutPlans, fetchWorkouts } = useAppStore();
   const router = useRouter();
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
+  const [activeWorkout, setActiveWorkout] = useState<string | null>(null);
   const [completedExercises, setCompletedExercises] = useState<Record<string, boolean>>({});
+  const [workoutStartTime, setWorkoutStartTime] = useState<number | null>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [restTimer, setRestTimer] = useState(0);
+  const [restActive, setRestActive] = useState(false);
+  const [showFinishMsg, setShowFinishMsg] = useState(false);
 
   useEffect(() => {
     if (!currentUser || currentUser.role !== 'student') {
@@ -27,6 +37,39 @@ export default function MeusTreinosPage() {
     }
     fetchWorkouts();
   }, [currentUser, router, fetchWorkouts]);
+
+  // Workout elapsed time
+  useEffect(() => {
+    if (!workoutStartTime) return;
+    const interval = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - workoutStartTime) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [workoutStartTime]);
+
+  // Rest timer countdown
+  useEffect(() => {
+    if (!restActive || restTimer <= 0) {
+      if (restActive && restTimer <= 0) setRestActive(false);
+      return;
+    }
+    const interval = setInterval(() => {
+      setRestTimer((prev) => {
+        if (prev <= 1) {
+          setRestActive(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [restActive, restTimer]);
+
+  const formatTime = useCallback((seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }, []);
 
   if (!currentUser) return null;
 
@@ -38,9 +81,39 @@ export default function MeusTreinosPage() {
     try { return JSON.parse(dayOfWeek); } catch { return []; }
   };
 
-  const toggleExercise = (planId: string, exerciseIdx: number) => {
+  const startWorkout = (planId: string) => {
+    setActiveWorkout(planId);
+    setExpandedPlan(planId);
+    setWorkoutStartTime(Date.now());
+    setCompletedExercises({});
+    setElapsed(0);
+    setShowFinishMsg(false);
+  };
+
+  const finishWorkout = () => {
+    setShowFinishMsg(true);
+    setTimeout(() => {
+      setActiveWorkout(null);
+      setWorkoutStartTime(null);
+      setCompletedExercises({});
+      setElapsed(0);
+      setRestActive(false);
+      setRestTimer(0);
+      setShowFinishMsg(false);
+    }, 3000);
+  };
+
+  const toggleExercise = (planId: string, exerciseIdx: number, restSeconds: number) => {
+    if (activeWorkout !== planId) return;
     const key = `${planId}-${exerciseIdx}`;
-    setCompletedExercises((prev) => ({ ...prev, [key]: !prev[key] }));
+    const isNowCompleted = !completedExercises[key];
+    setCompletedExercises((prev) => ({ ...prev, [key]: isNowCompleted }));
+
+    // Start rest timer when completing an exercise
+    if (isNowCompleted && restSeconds > 0) {
+      setRestTimer(restSeconds);
+      setRestActive(true);
+    }
   };
 
   const getCompletedCount = (planId: string, total: number) => {
@@ -59,6 +132,49 @@ export default function MeusTreinosPage() {
         icon={<Dumbbell size={24} />}
       />
 
+      {/* Active workout timer bar */}
+      {activeWorkout && !showFinishMsg && (
+        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Timer size={20} className="text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-gray font-medium">Treino em andamento</p>
+                <p className="text-2xl font-bold text-gray-lighter font-mono">{formatTime(elapsed)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              {restActive && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-accent/10 border border-accent/20 animate-fade-in">
+                  <Clock size={16} className="text-accent" />
+                  <div>
+                    <p className="text-[10px] text-accent font-medium">Descanso</p>
+                    <p className="text-lg font-bold text-accent font-mono">{formatTime(restTimer)}</p>
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={finishWorkout}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-danger/10 text-danger text-sm font-semibold hover:bg-danger/20 transition-colors"
+              >
+                <Square size={16} /> Finalizar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Finish message */}
+      {showFinishMsg && (
+        <div className="mb-6 p-6 rounded-2xl bg-gradient-to-r from-secondary/10 to-accent/10 border border-secondary/20 text-center animate-fade-in">
+          <Trophy size={40} className="text-accent mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-gray-lighter mb-1">Treino Finalizado!</h3>
+          <p className="text-sm text-gray">Tempo total: {formatTime(elapsed)}</p>
+        </div>
+      )}
+
       <div className="space-y-4">
         {myPlans.length === 0 ? (
           <div className="text-center py-16 animate-fade-in">
@@ -71,16 +187,20 @@ export default function MeusTreinosPage() {
         ) : (
           myPlans.map((plan, index) => {
             const isExpanded = expandedPlan === plan.id;
+            const isActive = activeWorkout === plan.id;
             const completedCount = getCompletedCount(plan.id, plan.exercises.length);
             const progressPercent = plan.exercises.length > 0
               ? Math.round((completedCount / plan.exercises.length) * 100)
               : 0;
             const planDays = parseDays(plan.day_of_week);
+            const allDone = completedCount === plan.exercises.length && plan.exercises.length > 0;
 
             return (
               <div
                 key={plan.id}
-                className="rounded-2xl bg-dark-light border border-dark-lighter overflow-hidden card-hover animate-fade-in"
+                className={`rounded-2xl bg-dark-light border overflow-hidden card-hover animate-fade-in ${
+                  isActive ? 'border-primary/40 shadow-lg shadow-primary/5' : 'border-dark-lighter'
+                }`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <button
@@ -88,31 +208,41 @@ export default function MeusTreinosPage() {
                   className="w-full flex items-center justify-between p-5 text-left"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center relative">
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center relative ${
+                      isActive
+                        ? 'bg-gradient-to-br from-primary/30 to-secondary/30'
+                        : 'bg-gradient-to-br from-primary/20 to-secondary/20'
+                    }`}>
                       <Dumbbell size={24} className="text-primary" />
-                      {completedCount === plan.exercises.length && completedCount > 0 && (
+                      {allDone && isActive && (
                         <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-secondary flex items-center justify-center">
                           <CheckCircle2 size={12} className="text-white" />
                         </div>
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-lighter">{plan.name}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-gray-lighter">{plan.name}</h3>
+                        {isActive && (
+                          <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase">Em andamento</span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray mt-0.5">
                         {planDays.join(', ')} · {plan.exercises.length} exercícios
                       </p>
-                      {/* Mini progress bar */}
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <div className="w-24 h-1.5 bg-dark-lighter rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-secondary rounded-full progress-bar"
-                            style={{ width: `${progressPercent}%` }}
-                          />
+                      {isActive && (
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <div className="w-24 h-1.5 bg-dark-lighter rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-secondary rounded-full progress-bar"
+                              style={{ width: `${progressPercent}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] text-gray font-medium">
+                            {completedCount}/{plan.exercises.length}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-gray font-medium">
-                          {completedCount}/{plan.exercises.length}
-                        </span>
-                      </div>
+                      )}
                     </div>
                   </div>
                   {isExpanded ? (
@@ -127,28 +257,51 @@ export default function MeusTreinosPage() {
                     {plan.description && (
                       <p className="text-sm text-gray mb-4">{plan.description}</p>
                     )}
+
+                    {/* Start workout button */}
+                    {!isActive && !activeWorkout && (
+                      <button
+                        onClick={() => startWorkout(plan.id)}
+                        className="w-full flex items-center justify-center gap-2 mb-4 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold text-sm hover:shadow-lg hover:shadow-primary/25 transition-all"
+                      >
+                        <Play size={18} /> Iniciar Treino
+                      </button>
+                    )}
+
+                    {!isActive && activeWorkout && (
+                      <div className="mb-4 p-3 rounded-xl bg-dark/50 border border-dark-lighter text-center">
+                        <p className="text-xs text-gray">Finalize o treino em andamento antes de iniciar outro</p>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
                       {plan.exercises.map((ex, idx) => {
                         const isCompleted = completedExercises[`${plan.id}-${idx}`];
+                        const canInteract = isActive;
                         return (
                           <button
                             key={idx}
-                            onClick={() => toggleExercise(plan.id, idx)}
+                            onClick={() => canInteract && toggleExercise(plan.id, idx, ex.rest_seconds)}
+                            disabled={!canInteract}
                             className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                               isCompleted
                                 ? 'bg-secondary/5 border-secondary/20'
-                                : 'bg-dark/50 border-dark-lighter/50 hover:border-primary/20'
+                                : canInteract
+                                  ? 'bg-dark/50 border-dark-lighter/50 hover:border-primary/20 cursor-pointer'
+                                  : 'bg-dark/30 border-dark-lighter/30 opacity-60 cursor-not-allowed'
                             }`}
                           >
                             {isCompleted ? (
                               <CheckCircle2 size={22} className="text-secondary flex-shrink-0" />
-                            ) : (
+                            ) : canInteract ? (
                               <Circle size={22} className="text-gray flex-shrink-0" />
+                            ) : (
+                              <Circle size={22} className="text-gray/40 flex-shrink-0" />
                             )}
                             <div className="flex-1 min-w-0">
                               <p
                                 className={`text-sm font-semibold ${
-                                  isCompleted ? 'text-secondary line-through' : 'text-gray-lighter'
+                                  isCompleted ? 'text-secondary line-through' : canInteract ? 'text-gray-lighter' : 'text-gray'
                                 }`}
                               >
                                 {ex.exercise_name}
@@ -159,7 +312,7 @@ export default function MeusTreinosPage() {
                                 </span>
                                 {ex.weight && <span>💪 {ex.weight}</span>}
                                 <span className="flex items-center gap-1">
-                                  <Clock size={12} /> {ex.rest_seconds}s
+                                  <Clock size={12} /> {ex.rest_seconds}s descanso
                                 </span>
                               </div>
                             </div>
@@ -170,6 +323,18 @@ export default function MeusTreinosPage() {
                         );
                       })}
                     </div>
+
+                    {/* Auto-finish when all done */}
+                    {isActive && allDone && (
+                      <div className="mt-4 text-center animate-fade-in">
+                        <button
+                          onClick={finishWorkout}
+                          className="flex items-center justify-center gap-2 mx-auto px-6 py-3 rounded-xl bg-gradient-to-r from-secondary to-accent text-white font-semibold text-sm hover:shadow-lg hover:shadow-secondary/25 transition-all"
+                        >
+                          <Trophy size={18} /> Concluir Treino
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
