@@ -198,6 +198,19 @@ export async function apiGetCompleted(workoutId: string): Promise<string[]> {
   return request<string[]>(`/api/workouts/${workoutId}/completed`);
 }
 
+export async function apiSendWorkoutFeedback(data: {
+  workoutPlanId: string;
+  duration: string;
+  rating: number;
+  intensity: string;
+  observations: string;
+}): Promise<{ ok: boolean }> {
+  return request<{ ok: boolean }>('/api/workouts/feedback', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 // --- Sessions ---
 export async function apiGetSessions(params?: { date?: string; status?: string }): Promise<ScheduleSession[]> {
   const searchParams = new URLSearchParams();

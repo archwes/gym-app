@@ -4,6 +4,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import PageHeader from '@/components/ui/PageHeader';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import { apiSendWorkoutFeedback } from '@/lib/api';
 import {
   Dumbbell,
   ChevronDown,
@@ -16,6 +19,10 @@ import {
   Square,
   Timer,
   Trophy,
+  Star,
+  MessageSquare,
+  Zap,
+  Loader2,
 } from 'lucide-react';
 
 export default function MeusTreinosPage() {
@@ -29,6 +36,12 @@ export default function MeusTreinosPage() {
   const [restTimer, setRestTimer] = useState(0);
   const [restActive, setRestActive] = useState(false);
   const [showFinishMsg, setShowFinishMsg] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState(0);
+  const [feedbackIntensity, setFeedbackIntensity] = useState('');
+  const [feedbackObs, setFeedbackObs] = useState('');
+  const [sendingFeedback, setSendingFeedback] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
   useEffect(() => {
     if (!currentUser || currentUser.role !== 'student') {
@@ -91,16 +104,57 @@ export default function MeusTreinosPage() {
   };
 
   const finishWorkout = () => {
+    setRestActive(false);
+    setRestTimer(0);
+    setFeedbackRating(0);
+    setFeedbackIntensity('');
+    setFeedbackObs('');
+    setFeedbackSent(false);
+    setShowFeedbackModal(true);
+  };
+
+  const submitFeedback = async () => {
+    if (!activeWorkout) return;
+    setSendingFeedback(true);
+    try {
+      await apiSendWorkoutFeedback({
+        workoutPlanId: activeWorkout,
+        duration: formatTime(elapsed),
+        rating: feedbackRating,
+        intensity: feedbackIntensity,
+        observations: feedbackObs,
+      });
+      setFeedbackSent(true);
+      setTimeout(() => {
+        setShowFeedbackModal(false);
+        setActiveWorkout(null);
+        setWorkoutStartTime(null);
+        setCompletedExercises({});
+        setElapsed(0);
+        setShowFinishMsg(false);
+      }, 1500);
+    } catch {
+      // still close
+      setShowFeedbackModal(false);
+      setActiveWorkout(null);
+      setWorkoutStartTime(null);
+      setCompletedExercises({});
+      setElapsed(0);
+    } finally {
+      setSendingFeedback(false);
+    }
+  };
+
+  const skipFeedback = () => {
+    setShowFeedbackModal(false);
     setShowFinishMsg(true);
     setTimeout(() => {
       setActiveWorkout(null);
       setWorkoutStartTime(null);
       setCompletedExercises({});
       setElapsed(0);
-      setRestActive(false);
-      setRestTimer(0);
       setShowFinishMsg(false);
-    }, 3000);
+    }, 2000);
   };
 
   const toggleExercise = (planId: string, exerciseIdx: number, restSeconds: number) => {
@@ -147,17 +201,17 @@ export default function MeusTreinosPage() {
             </div>
             <div className="flex items-center gap-3">
               {restActive && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-accent/10 border border-accent/20 animate-fade-in min-w-0">
+                <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent/10 border border-accent/20 animate-fade-in min-w-0 h-[42px]">
                   <Clock size={16} className="text-accent shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[10px] text-accent font-medium">Descanso</p>
-                    <p className="text-lg font-bold text-accent font-mono">{formatTime(restTimer)}</p>
+                    <p className="text-[10px] text-accent font-medium leading-none">Descanso</p>
+                    <p className="text-sm font-bold text-accent font-mono leading-tight">{formatTime(restTimer)}</p>
                   </div>
                 </div>
               )}
               <button
                 onClick={finishWorkout}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-danger/10 text-danger text-sm font-semibold hover:bg-danger/20 transition-colors shrink-0"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-danger/10 text-danger text-sm font-semibold hover:bg-danger/20 transition-colors shrink-0 h-[42px]"
               >
                 <Square size={16} /> Finalizar
               </button>
@@ -333,6 +387,109 @@ export default function MeusTreinosPage() {
                         >
                           <Trophy size={18} /> Concluir Treino
                         </button>
+
+                    {/* Feedback Modal */}
+                    <Modal isOpen={showFeedbackModal} onClose={skipFeedback} title="Treino Finalizado!" size="md">
+                      {feedbackSent ? (
+                        <div className="text-center py-6 animate-fade-in">
+                          <Trophy size={48} className="text-accent mx-auto mb-3" />
+                          <h3 className="text-lg font-bold text-gray-lighter mb-1">Feedback enviado!</h3>
+                          <p className="text-sm text-gray">Seu personal foi notificado.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-5">
+                          {/* Duration */}
+                          <div className="flex items-center gap-3 p-4 rounded-xl bg-dark border border-dark-lighter">
+                            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                              <Timer size={20} className="text-primary" />
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray font-medium">Tempo de treino</p>
+                              <p className="text-2xl font-bold text-gray-lighter font-mono">{formatTime(elapsed)}</p>
+                            </div>
+                          </div>
+
+                          {/* Rating */}
+                          <div>
+                            <label className="block text-xs font-medium text-gray mb-2 flex items-center gap-1.5">
+                              <Star size={14} className="text-accent" /> Nota do treino
+                            </label>
+                            <div className="flex gap-2">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                  key={star}
+                                  type="button"
+                                  onClick={() => setFeedbackRating(star)}
+                                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                                    feedbackRating >= star
+                                      ? 'bg-accent/20 text-accent border border-accent/30 scale-110'
+                                      : 'bg-dark border border-dark-lighter text-gray hover:border-accent/20 hover:text-accent/60'
+                                  }`}
+                                >
+                                  <Star size={20} fill={feedbackRating >= star ? 'currentColor' : 'none'} />
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Intensity */}
+                          <div>
+                            <label className="block text-xs font-medium text-gray mb-2 flex items-center gap-1.5">
+                              <Zap size={14} className="text-secondary" /> Intensidade
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {[
+                                { value: 'light', label: 'Leve', emoji: '🟢' },
+                                { value: 'moderate', label: 'Moderada', emoji: '🟡' },
+                                { value: 'intense', label: 'Intensa', emoji: '🔴' },
+                                { value: 'extreme', label: 'Extrema', emoji: '💀' },
+                              ].map((opt) => (
+                                <button
+                                  key={opt.value}
+                                  type="button"
+                                  onClick={() => setFeedbackIntensity(opt.value)}
+                                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                                    feedbackIntensity === opt.value
+                                      ? 'bg-secondary/15 text-secondary border border-secondary/30'
+                                      : 'bg-dark border border-dark-lighter text-gray hover:border-secondary/20'
+                                  }`}
+                                >
+                                  <span>{opt.emoji}</span> {opt.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Observations */}
+                          <div>
+                            <label className="block text-xs font-medium text-gray mb-1.5 flex items-center gap-1.5">
+                              <MessageSquare size={14} className="text-primary" /> Observações
+                            </label>
+                            <textarea
+                              value={feedbackObs}
+                              onChange={(e) => setFeedbackObs(e.target.value)}
+                              placeholder="Como foi o treino? Alguma dificuldade?"
+                              rows={3}
+                              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary resize-none"
+                            />
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex justify-end gap-2 pt-2">
+                            <Button variant="outline" onClick={skipFeedback}>
+                              Pular
+                            </Button>
+                            <Button
+                              onClick={submitFeedback}
+                              disabled={sendingFeedback}
+                              icon={sendingFeedback ? <Loader2 size={16} className="animate-spin" /> : <Trophy size={16} />}
+                            >
+                              Enviar Feedback
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </Modal>
                       </div>
                     )}
                   </div>
