@@ -135,9 +135,9 @@ export default function MeusTreinosPage() {
       {/* Active workout timer bar */}
       {activeWorkout && !showFinishMsg && (
         <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 animate-fade-in">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
                 <Timer size={20} className="text-primary" />
               </div>
               <div>
@@ -147,9 +147,9 @@ export default function MeusTreinosPage() {
             </div>
             <div className="flex items-center gap-3">
               {restActive && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-accent/10 border border-accent/20 animate-fade-in">
-                  <Clock size={16} className="text-accent" />
-                  <div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-accent/10 border border-accent/20 animate-fade-in min-w-0">
+                  <Clock size={16} className="text-accent shrink-0" />
+                  <div className="min-w-0">
                     <p className="text-[10px] text-accent font-medium">Descanso</p>
                     <p className="text-lg font-bold text-accent font-mono">{formatTime(restTimer)}</p>
                   </div>
@@ -157,7 +157,7 @@ export default function MeusTreinosPage() {
               )}
               <button
                 onClick={finishWorkout}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-danger/10 text-danger text-sm font-semibold hover:bg-danger/20 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-danger/10 text-danger text-sm font-semibold hover:bg-danger/20 transition-colors shrink-0"
               >
                 <Square size={16} /> Finalizar
               </button>
