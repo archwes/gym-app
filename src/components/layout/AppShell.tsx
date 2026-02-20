@@ -1,6 +1,7 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import Sidebar from './Sidebar';
 import { Loader2 } from 'lucide-react';
@@ -11,12 +12,21 @@ interface AppShellProps {
 
 export default function AppShell({ children }: AppShellProps) {
   const { currentUser, initialized, restoreSession } = useAppStore();
+  const pathname = usePathname();
+  const [pageTransition, setPageTransition] = useState(false);
 
   useEffect(() => {
     if (!initialized) {
       restoreSession();
     }
   }, [initialized, restoreSession]);
+
+  // Page transition on route change
+  useEffect(() => {
+    setPageTransition(false);
+    const frame = requestAnimationFrame(() => setPageTransition(true));
+    return () => cancelAnimationFrame(frame);
+  }, [pathname]);
 
   if (!initialized) {
     return (
@@ -34,7 +44,9 @@ export default function AppShell({ children }: AppShellProps) {
     <div className="min-h-screen bg-dark">
       <Sidebar />
       <main className="lg:ml-72 min-h-screen">
-        <div className="p-4 pt-16 lg:p-8 lg:pt-8 max-w-7xl mx-auto">
+        <div
+          className={`p-4 pt-16 lg:p-8 lg:pt-8 max-w-7xl mx-auto page-transition ${pageTransition ? 'page-visible' : ''}`}
+        >
           {children}
         </div>
       </main>

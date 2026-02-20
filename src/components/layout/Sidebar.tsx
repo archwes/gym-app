@@ -45,6 +45,21 @@ export default function Sidebar() {
     }
   }, [currentUser, fetchNotifications]);
 
+  // Lock body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [sidebarOpen]);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname, setSidebarOpen]);
+
   if (!currentUser) return null;
 
   const links = currentUser.role === 'trainer' ? trainerLinks : studentLinks;
@@ -54,28 +69,38 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile hamburger */}
-      <button
-        onClick={toggleSidebar}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-dark-light border border-dark-lighter text-gray-light hover:text-primary transition-colors"
-        aria-label="Toggle menu"
-      >
-        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      {/* Mobile hamburger — only visible when sidebar is closed */}
+      {!sidebarOpen && (
+        <button
+          onClick={toggleSidebar}
+          className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-dark-light border border-dark-lighter text-gray-light hover:text-primary active:scale-95 transition-all duration-200"
+          aria-label="Abrir menu"
+        >
+          <Menu size={24} />
+        </button>
+      )}
 
       {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-30 mobile-overlay"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      <div
+        className={`lg:hidden fixed inset-0 z-30 transition-all duration-300 ${
+          sidebarOpen ? 'opacity-100 pointer-events-auto mobile-overlay' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setSidebarOpen(false)}
+      />
 
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 z-40 h-full w-72 bg-dark-light border-r border-dark-lighter flex flex-col transition-transform duration-300 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
+        {/* Close button inside sidebar (mobile) */}
+        <button
+          onClick={() => setSidebarOpen(false)}
+          className="lg:hidden absolute top-4 right-4 z-50 p-1.5 rounded-lg text-gray hover:text-gray-lighter hover:bg-dark-lighter/50 active:scale-95 transition-all duration-200"
+          aria-label="Fechar menu"
+        >
+          <X size={20} />
+        </button>
         {/* Logo */}
         <div className="p-6 border-b border-dark-lighter">
           <Link href="/dashboard" className="flex items-center gap-3">
