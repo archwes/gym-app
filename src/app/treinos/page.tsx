@@ -161,7 +161,7 @@ export default function TreinosPage() {
   ) => (
     <>
       <div>
-        <label className="block text-xs font-medium text-gray mb-1.5">Adicionar Exercício</label>
+        <label className="block text-xs font-medium text-gray mb-1.5 text-center">Adicionar Exercício</label>
         <select
           onChange={(e) => {
             if (e.target.value) {
@@ -169,7 +169,7 @@ export default function TreinosPage() {
               e.target.value = '';
             }
           }}
-          className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+          className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary text-center"
         >
           <option value="">Selecione um exercício</option>
           {exercises.map((ex) => (
@@ -182,7 +182,7 @@ export default function TreinosPage() {
 
       {exList.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[11px] text-gray font-medium uppercase tracking-wider">Exercícios ({exList.length})</p>
+          <p className="text-[11px] text-gray font-medium uppercase tracking-wider text-center">Exercícios ({exList.length})</p>
           {exList.map((ex, idx) => (
             <div key={idx} className="p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 space-y-2">
               <div className="flex items-center gap-2">
@@ -251,8 +251,8 @@ export default function TreinosPage() {
   // Shared days selector
   const renderDays = (selectedDays: string[], setDays: (d: string[]) => void) => (
     <div>
-      <label className="block text-xs font-medium text-gray mb-1.5">Dias da Semana</label>
-      <div className="flex flex-wrap gap-2">
+      <label className="block text-xs font-medium text-gray mb-1.5 text-center">Dias da Semana</label>
+      <div className="flex flex-wrap gap-2 justify-center">
         {days.map((day) => (
           <button
             key={day}
@@ -422,35 +422,35 @@ export default function TreinosPage() {
         title="Novo Plano de Treino"
         size="lg"
       >
-        <div className="space-y-4">
+        <div className="max-w-md mx-auto space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Nome do Treino</label>
+            <label className="block text-xs font-medium text-gray mb-1.5 text-center">Nome do Treino</label>
             <input
               type="text"
               value={newPlanName}
               onChange={(e) => setNewPlanName(e.target.value)}
               placeholder="Ex: Treino A - Peito e Tríceps"
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary"
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary text-center"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Descrição</label>
+            <label className="block text-xs font-medium text-gray mb-1.5 text-center">Descrição</label>
             <textarea
               value={newPlanDesc}
               onChange={(e) => setNewPlanDesc(e.target.value)}
               placeholder="Descrição do treino..."
               rows={2}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary resize-none"
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary resize-none text-center"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Aluno</label>
+            <label className="block text-xs font-medium text-gray mb-1.5 text-center">Aluno</label>
             <select
               value={newPlanStudent}
               onChange={(e) => setNewPlanStudent(e.target.value)}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary text-center"
             >
               <option value="">Selecione um aluno</option>
               {students.map((s) => (
@@ -462,7 +462,7 @@ export default function TreinosPage() {
           {renderDays(newPlanDays, setNewPlanDays)}
           {renderExerciseForm(newPlanExercises, setNewPlanExercises)}
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-center gap-2 pt-2">
             <Button variant="outline" onClick={() => setShowNewPlanModal(false)}>
               Cancelar
             </Button>
@@ -483,31 +483,31 @@ export default function TreinosPage() {
         title="Editar Treino"
         size="lg"
       >
-        <div className="space-y-4">
+        <div className="max-w-md mx-auto space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Nome do Treino</label>
+            <label className="block text-xs font-medium text-gray mb-1.5 text-center">Nome do Treino</label>
             <input
               type="text"
               value={editPlanName}
               onChange={(e) => setEditPlanName(e.target.value)}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary text-center"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray mb-1.5">Descrição</label>
+            <label className="block text-xs font-medium text-gray mb-1.5 text-center">Descrição</label>
             <textarea
               value={editPlanDesc}
               onChange={(e) => setEditPlanDesc(e.target.value)}
               rows={2}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary resize-none"
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary resize-none text-center"
             />
           </div>
 
           {renderDays(editPlanDays, setEditPlanDays)}
           {renderExerciseForm(editPlanExercises, setEditPlanExercises)}
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-center gap-2 pt-2">
             <Button variant="outline" onClick={() => setShowEditModal(false)}>
               Cancelar
             </Button>
