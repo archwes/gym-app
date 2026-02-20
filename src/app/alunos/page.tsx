@@ -11,6 +11,7 @@ import {
   X, UserPlus, Check, Copy, Loader2, AlertCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+import { formatPhone } from '@/lib/format';
 
 export default function AlunosPage() {
   const { currentUser, users, workoutPlans, progress, fetchUsers, fetchWorkouts, fetchProgress, addStudent } = useAppStore();
@@ -187,7 +188,7 @@ export default function AlunosPage() {
                   {student.phone && (
                     <div className="flex items-center gap-2 text-xs text-gray">
                       <Phone size={14} />
-                      <span>{student.phone}</span>
+                      <span>{formatPhone(student.phone!)}</span>
                     </div>
                   )}
                 </div>
@@ -398,7 +399,7 @@ export default function AlunosPage() {
                       <input
                         type="tel"
                         value={newPhone}
-                        onChange={(e) => setNewPhone(e.target.value)}
+                        onChange={(e) => setNewPhone(formatPhone(e.target.value))}
                         placeholder="(11) 99999-9999"
                         className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
                       />

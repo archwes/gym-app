@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { apiChangePassword } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
 import { User, Save, Lock, Check, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { formatPhone } from '@/lib/format';
 
 export default function PerfilPage() {
   const { currentUser, updateProfile } = useAppStore();
@@ -35,7 +36,7 @@ export default function PerfilPage() {
       return;
     }
     setName(currentUser.name);
-    setPhone(currentUser.phone || '');
+    setPhone(currentUser.phone ? formatPhone(currentUser.phone) : '');
     setAvatar(currentUser.avatar || '');
   }, [currentUser, router]);
 
@@ -143,7 +144,7 @@ export default function PerfilPage() {
               <input
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(formatPhone(e.target.value))}
                 placeholder="(11) 99999-9999"
                 className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm placeholder:text-gray/50 focus:outline-none focus:border-primary/50"
               />

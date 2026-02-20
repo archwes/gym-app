@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { Dumbbell, Users, TrendingUp, Calendar, Shield, Zap, ArrowRight, Loader2, Mail, Lock, User, Phone } from 'lucide-react';
+import { formatPhone } from '@/lib/format';
 
 export default function HomePage() {
   const { currentUser, login, register, loading, initialized, restoreSession } = useAppStore();
@@ -242,7 +243,7 @@ export default function HomePage() {
                     <label className="block text-xs font-medium text-gray mb-1.5">Telefone (opcional)</label>
                     <div className="relative">
                       <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
-                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 99999-0000"
+                      <input type="tel" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="(11) 99999-0000"
                         className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
                     </div>
                   </div>

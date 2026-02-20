@@ -7,6 +7,7 @@ import StatCard from '@/components/ui/StatCard';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { LayoutDashboard, Dumbbell, Calendar, TrendingUp, Target, Flame, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { formatDateBR } from '@/lib/format';
 
 export default function StudentDashboard() {
   const { currentUser, workoutPlans, sessions, progress, fetchWorkouts, fetchSessions, fetchProgress } = useAppStore();
@@ -202,7 +203,7 @@ export default function StudentDashboard() {
                   <Clock size={18} className="text-accent" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-lighter">{session.date}</p>
+                  <p className="text-sm font-semibold text-gray-lighter">{formatDateBR(session.date)}</p>
                   <p className="text-xs text-gray">{session.time} · {session.type}</p>
                 </div>
               </div>
