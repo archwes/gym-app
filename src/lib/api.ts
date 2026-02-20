@@ -39,16 +39,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers,
   });
 
-  if (res.status === 401) {
-    removeToken();
-    if (typeof window !== 'undefined') {
-      window.location.href = '/';
-    }
-    throw new Error('Não autorizado');
-  }
-
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
+
+    if (res.status === 401 && !path.startsWith('/api/auth/')) {
+      removeToken();
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+    }
+
     throw new Error(body.error || `Erro ${res.status}`);
   }
 
