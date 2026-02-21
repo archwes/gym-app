@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
       />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
         <StatCard title="Usuários" value={stats.totalUsers} icon={<Users size={24} />} color="primary" href="/admin/usuarios" />
         <StatCard title="Personal Trainers" value={stats.totalTrainers} icon={<Users size={24} />} color="secondary" href="/admin/usuarios" />
         <StatCard title="Alunos" value={stats.totalStudents} icon={<Users size={24} />} color="accent" href="/admin/usuarios" />

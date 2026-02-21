@@ -29,23 +29,23 @@ export default function StatCard({ title, value, icon, trend, trendUp, color = '
   };
 
   const content = (
-    <div className="flex items-start justify-between">
-      <div>
-        <p className="text-sm text-gray font-medium">{title}</p>
-        <p className="text-3xl font-bold text-gray-lighter mt-1">{value}</p>
+    <div className="flex items-start justify-between gap-2">
+      <div className="min-w-0">
+        <p className="text-xs sm:text-sm text-gray font-medium truncate">{title}</p>
+        <p className="text-2xl sm:text-3xl font-bold text-gray-lighter mt-1">{value}</p>
         {trend && (
           <p className={`text-xs mt-2 font-medium ${trendUp ? 'text-secondary' : 'text-danger'}`}>
             {trendUp ? '↑' : '↓'} {trend}
           </p>
         )}
       </div>
-      <div className={`w-12 h-12 rounded-xl ${iconColorMap[color]} flex items-center justify-center`}>
+      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${iconColorMap[color]} flex items-center justify-center shrink-0`}>
         {icon}
       </div>
     </div>
   );
 
-  const classes = `block rounded-2xl bg-gradient-to-br ${colorMap[color]} border p-5 card-hover transition-all`;
+  const classes = `block rounded-2xl bg-gradient-to-br ${colorMap[color]} border p-3 sm:p-5 card-hover transition-all`;
 
   if (href) {
     return (
