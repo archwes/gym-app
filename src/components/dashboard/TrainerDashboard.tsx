@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import PageHeader from '@/components/ui/PageHeader';
 import StatCard from '@/components/ui/StatCard';
-import { LayoutDashboard, Users, Dumbbell, Calendar, TrendingUp, Clock } from 'lucide-react';
+import { LayoutDashboard, Users, Dumbbell, Calendar, TrendingUp, Clock, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
 export default function TrainerDashboard() {
@@ -83,12 +83,13 @@ export default function TrainerDashboard() {
           {todaySessions.length === 0 ? (
             <p className="text-sm text-gray py-8 text-center">Nenhuma sessão agendada para hoje</p>
           ) : (
-            <div className="space-y-3">
-              {todaySessions.map((session) => (
-                <div
-                  key={session.id}
-                  className="flex items-center gap-4 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/20 transition-colors"
-                >
+            <div className="relative">
+              <div className="space-y-3">
+                {todaySessions.slice(0, 4).map((session, idx) => (
+                  <div
+                    key={session.id}
+                    className={`flex items-center gap-4 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/20 transition-colors ${idx === 3 ? 'opacity-40' : ''}`}
+                  >
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <Clock size={20} className="text-primary" />
                   </div>
@@ -113,6 +114,10 @@ export default function TrainerDashboard() {
                   </span>
                 </div>
               ))}
+              </div>
+              {todaySessions.length > 3 && (
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-light to-transparent pointer-events-none rounded-b-2xl" />
+              )}
             </div>
           )}
         </div>
@@ -125,8 +130,9 @@ export default function TrainerDashboard() {
               Ver todos →
             </Link>
           </div>
-          <div className="space-y-3">
-            {students.map((student) => {
+          <div className="relative">
+            <div className="space-y-3">
+              {students.slice(0, 4).map((student, idx) => {
               const studentPlans = workoutPlans.filter(
                 (p) => p.student_id === student.id && p.is_active
               );
@@ -138,7 +144,7 @@ export default function TrainerDashboard() {
               return (
                 <div
                   key={student.id}
-                  className="flex items-center gap-4 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/20 transition-colors"
+                  className={`flex items-center gap-4 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/20 transition-colors ${idx === 3 ? 'opacity-40' : ''}`}
                 >
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center text-lg">
                     {student.avatar}
@@ -161,6 +167,10 @@ export default function TrainerDashboard() {
                 </div>
               );
             })}
+            </div>
+            {students.length > 3 && (
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-light to-transparent pointer-events-none rounded-b-2xl" />
+            )}
           </div>
         </div>
       </div>
@@ -171,7 +181,7 @@ export default function TrainerDashboard() {
           { href: '/treinos', label: 'Novo Treino', icon: <Dumbbell size={20} />, color: 'bg-primary/10 text-primary' },
           { href: '/alunos', label: 'Ver Alunos', icon: <Users size={20} />, color: 'bg-secondary/10 text-secondary' },
           { href: '/agenda', label: 'Agendar', icon: <Calendar size={20} />, color: 'bg-accent/10 text-accent' },
-          { href: '/exercicios', label: 'Exercícios', icon: <Dumbbell size={20} />, color: 'bg-primary-light/10 text-primary-light' },
+          { href: '/exercicios', label: 'Exercícios', icon: <BookOpen size={20} />, color: 'bg-primary-light/10 text-primary-light' },
         ].map((action) => (
           <Link
             key={action.label}

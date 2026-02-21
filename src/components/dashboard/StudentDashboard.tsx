@@ -110,20 +110,25 @@ export default function StudentDashboard() {
                   <p className="text-xs text-gray">{todayPlan.exercises.length} exercícios</p>
                 </div>
               </div>
-              <div className="space-y-2">
-                {todayPlan.exercises.map((ex, idx) => (
-                  <div key={idx} className="flex items-center gap-3 p-2.5 rounded-lg bg-dark/50">
-                    <span className="w-6 h-6 rounded-md bg-dark-lighter text-[10px] font-bold flex items-center justify-center text-gray">
-                      {idx + 1}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-lighter truncate">{ex.exercise_name}</p>
-                      <p className="text-xs text-gray">
-                        {ex.sets}x{ex.reps} {ex.weight && `· ${ex.weight}`} · {ex.rest_seconds}s descanso
-                      </p>
+              <div className="relative">
+                <div className="space-y-2">
+                  {todayPlan.exercises.slice(0, 4).map((ex, idx) => (
+                    <div key={idx} className={`flex items-center gap-3 p-2.5 rounded-lg bg-dark/50 ${idx === 3 ? 'opacity-40' : ''}`}>
+                      <span className="w-6 h-6 rounded-md bg-dark-lighter text-[10px] font-bold flex items-center justify-center text-gray">
+                        {idx + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-lighter truncate">{ex.exercise_name}</p>
+                        <p className="text-xs text-gray">
+                          {ex.sets}x{ex.reps} {ex.weight && `· ${ex.weight}`} · {ex.rest_seconds}s descanso
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                {todayPlan.exercises.length > 3 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-light to-transparent pointer-events-none rounded-b-2xl" />
+                )}
               </div>
             </div>
           ) : (
@@ -197,21 +202,26 @@ export default function StudentDashboard() {
       {mySessions.length > 0 && (
         <div className="mt-4 sm:mt-6 rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
           <h2 className="text-base sm:text-lg font-bold text-gray-lighter mb-3 sm:mb-4">Próximas Sessões</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {mySessions.slice(0, 3).map((session) => (
-              <div
-                key={session.id}
-                className="flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50"
-              >
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Clock size={18} className="text-accent" />
+          <div className="relative">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {mySessions.slice(0, 4).map((session, idx) => (
+                <div
+                  key={session.id}
+                  className={`flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 ${idx === 3 ? 'opacity-40' : ''}`}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <Clock size={18} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-lighter">{formatDateBR(session.date)}</p>
+                    <p className="text-xs text-gray">{session.time} · {session.type}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-lighter">{formatDateBR(session.date)}</p>
-                  <p className="text-xs text-gray">{session.time} · {session.type}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {mySessions.length > 3 && (
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-light to-transparent pointer-events-none rounded-b-2xl" />
+            )}
           </div>
         </div>
       )}
