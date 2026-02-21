@@ -3,19 +3,37 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
-import { Dumbbell, Users, TrendingUp, Calendar, Shield, Zap, ArrowRight, Loader2, Mail, Lock, User, Phone } from 'lucide-react';
+import { apiForgotPassword, apiResendVerification } from '@/lib/api';
+import {
+  Dumbbell, Users, TrendingUp, Calendar, Shield, Zap,
+  ArrowRight, Loader2, Mail, Lock, User, Phone, Eye, EyeOff,
+  CheckCircle2, AlertCircle, Award,
+} from 'lucide-react';
 import { formatPhone } from '@/lib/format';
+
+type Mode = 'landing' | 'login' | 'register' | 'forgot' | 'verify-pending';
 
 export default function HomePage() {
   const { currentUser, login, register, loading, initialized, restoreSession } = useAppStore();
   const router = useRouter();
-  const [mode, setMode] = useState<'landing' | 'login' | 'register'>('landing');
+  const [mode, setMode] = useState<Mode>('landing');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [cref, setCref] = useState('');
   const [role, setRole] = useState<'trainer' | 'student'>('student');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [pendingEmail, setPendingEmail] = useState('');
+  const [resending, setResending] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   useEffect(() => {
     if (!initialized) {
@@ -29,6 +47,16 @@ export default function HomePage() {
     }
   }, [currentUser, router]);
 
+  const resetForm = () => {
+    setEmail(''); setPassword(''); setConfirmPassword('');
+    setName(''); setPhone(''); setCref('');
+    setRole('student'); setError(''); setSuccess('');
+    setShowPassword(false); setShowConfirmPassword(false);
+    setForgotSent(false);
+  };
+
+  const switchMode = (newMode: Mode) => { resetForm(); setMode(newMode); };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -36,19 +64,53 @@ export default function HomePage() {
       await login(email, password);
       router.push('/dashboard');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Erro ao fazer login');
+      const typedErr = err as Error & { requiresVerification?: boolean; email?: string };
+      if (typedErr.requiresVerification) {
+        setPendingEmail(typedErr.email || email);
+        setMode('verify-pending');
+        return;
+      }
+      setError(typedErr.message || 'Erro ao fazer login');
     }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (password.length < 6) { setError('A senha deve ter pelo menos 6 caracteres'); return; }
+    if (password !== confirmPassword) { setError('As senhas não coincidem'); return; }
     try {
-      await register({ name, email, password, role, phone: phone || undefined });
-      router.push('/dashboard');
+      await register({
+        name, email, password, role,
+        phone: phone || undefined,
+        cref: role === 'trainer' && cref ? cref : undefined,
+      });
+      setPendingEmail(email);
+      setMode('verify-pending');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro ao criar conta');
     }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(''); setForgotLoading(true);
+    try {
+      const res = await apiForgotPassword(email);
+      setForgotSent(true); setSuccess(res.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao enviar e-mail');
+    } finally { setForgotLoading(false); }
+  };
+
+  const handleResendVerification = async () => {
+    setResending(true); setError('');
+    try {
+      await apiResendVerification(pendingEmail);
+      setSuccess('E-mail de verificação reenviado!');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao reenviar e-mail');
+    } finally { setResending(false); }
   };
 
   const handleDemoLogin = async (demoEmail: string) => {
@@ -57,7 +119,13 @@ export default function HomePage() {
       await login(demoEmail, '123456');
       router.push('/dashboard');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Erro ao fazer login');
+      const typedErr = err as Error & { requiresVerification?: boolean; email?: string };
+      if (typedErr.requiresVerification) {
+        setPendingEmail(typedErr.email || demoEmail);
+        setMode('verify-pending');
+        return;
+      }
+      setError(typedErr.message || 'Erro ao fazer login');
     }
   };
 
@@ -87,7 +155,7 @@ export default function HomePage() {
 
         <div className="relative max-w-6xl mx-auto px-4 py-8">
           <nav className="flex items-center justify-between mb-16 sm:mb-24">
-            <button onClick={() => setMode('landing')} className="flex items-center gap-3">
+            <button onClick={() => switchMode('landing')} className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
                 <Dumbbell size={22} className="text-white" />
               </div>
@@ -95,10 +163,10 @@ export default function HomePage() {
             </button>
             {mode === 'landing' && (
               <div className="flex gap-2">
-                <button onClick={() => setMode('login')} className="px-4 py-2 rounded-xl text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
+                <button onClick={() => switchMode('login')} className="px-4 py-2 rounded-xl text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
                   Login
                 </button>
-                <button onClick={() => setMode('register')} className="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-dark transition-colors">
+                <button onClick={() => switchMode('register')} className="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-dark transition-colors">
                   Cadastrar
                 </button>
               </div>
@@ -122,13 +190,13 @@ export default function HomePage() {
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 animate-fade-in">
                   <button
-                    onClick={() => setMode('login')}
+                    onClick={() => switchMode('login')}
                     className="px-8 py-3 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
                   >
                     Fazer Login
                   </button>
                   <button
-                    onClick={() => setMode('register')}
+                    onClick={() => switchMode('register')}
                     className="px-8 py-3 rounded-xl text-sm font-bold border border-dark-lighter text-gray-lighter hover:bg-dark-lighter transition-colors"
                   >
                     Criar Conta Grátis
@@ -184,7 +252,12 @@ export default function HomePage() {
               <div className="rounded-2xl glass p-8">
                 <h2 className="text-2xl font-bold text-gray-lighter mb-2">Bem-vindo de volta</h2>
                 <p className="text-sm text-gray mb-6">Entre com suas credenciais</p>
-                {error && <p className="text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">{error}</p>}
+                {error && (
+                  <div className="flex items-start gap-2 text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">
+                    <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Email</label>
@@ -198,9 +271,17 @@ export default function HomePage() {
                     <label className="block text-xs font-medium text-gray mb-1.5">Senha</label>
                     <div className="relative">
                       <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
-                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required
-                        className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                      <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required
+                        className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-10 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter transition-colors">
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
                     </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <button type="button" onClick={() => switchMode('forgot')} className="text-xs text-primary font-medium hover:text-primary-light transition-colors">
+                      Esqueci minha senha
+                    </button>
                   </div>
                   <button type="submit" disabled={loading}
                     className="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
@@ -210,18 +291,23 @@ export default function HomePage() {
                 </form>
                 <p className="text-sm text-gray text-center mt-6">
                   Não tem conta?{' '}
-                  <button onClick={() => { setMode('register'); setError(''); }} className="text-primary font-semibold hover:text-primary-light">
+                  <button onClick={() => switchMode('register')} className="text-primary font-semibold hover:text-primary-light">
                     Criar conta
                   </button>
                 </p>
               </div>
             </div>
-          ) : (
+          ) : mode === 'register' ? (
             <div className="max-w-md mx-auto animate-fade-in">
               <div className="rounded-2xl glass p-8">
                 <h2 className="text-2xl font-bold text-gray-lighter mb-2">Criar conta</h2>
                 <p className="text-sm text-gray mb-6">Preencha seus dados para começar</p>
-                {error && <p className="text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">{error}</p>}
+                {error && (
+                  <div className="flex items-start gap-2 text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">
+                    <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Nome completo</label>
@@ -251,9 +337,26 @@ export default function HomePage() {
                     <label className="block text-xs font-medium text-gray mb-1.5">Senha</label>
                     <div className="relative">
                       <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
-                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required minLength={6}
-                        className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                      <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required minLength={6}
+                        className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-10 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter transition-colors">
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
                     </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray mb-1.5">Confirmar senha</label>
+                    <div className="relative">
+                      <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
+                      <input type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha" required minLength={6}
+                        className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-10 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                      <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter transition-colors">
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {confirmPassword && password !== confirmPassword && (
+                      <p className="text-danger text-xs mt-1">As senhas não coincidem</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Tipo de conta</label>
@@ -268,7 +371,17 @@ export default function HomePage() {
                       </button>
                     </div>
                   </div>
-                  <button type="submit" disabled={loading}
+                  {role === 'trainer' && (
+                    <div className="animate-fade-in">
+                      <label className="block text-xs font-medium text-gray mb-1.5">CREF (opcional)</label>
+                      <div className="relative">
+                        <Award size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
+                        <input type="text" value={cref} onChange={(e) => setCref(e.target.value)} placeholder="000000-G/SP"
+                          className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                      </div>
+                    </div>
+                  )}
+                  <button type="submit" disabled={loading || (!!confirmPassword && password !== confirmPassword)}
                     className="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                     {loading ? <Loader2 size={18} className="animate-spin" /> : null}
                     Criar Conta
@@ -276,13 +389,93 @@ export default function HomePage() {
                 </form>
                 <p className="text-sm text-gray text-center mt-6">
                   Já tem conta?{' '}
-                  <button onClick={() => { setMode('login'); setError(''); }} className="text-primary font-semibold hover:text-primary-light">
+                  <button onClick={() => switchMode('login')} className="text-primary font-semibold hover:text-primary-light">
                     Fazer login
                   </button>
                 </p>
               </div>
             </div>
-          )}
+          ) : mode === 'forgot' ? (
+            <div className="max-w-md mx-auto animate-fade-in">
+              <div className="rounded-2xl glass p-8">
+                {!forgotSent ? (
+                  <>
+                    <h2 className="text-2xl font-bold text-gray-lighter mb-2">Esqueci minha senha</h2>
+                    <p className="text-sm text-gray mb-6">Informe seu e-mail para receber o link de redefinição</p>
+                    {error && (
+                      <div className="flex items-start gap-2 text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">
+                        <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                        <span>{error}</span>
+                      </div>
+                    )}
+                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray mb-1.5">Email</label>
+                        <div className="relative">
+                          <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
+                          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="seu@email.com" required
+                            className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
+                        </div>
+                      </div>
+                      <button type="submit" disabled={forgotLoading}
+                        className="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                        {forgotLoading ? <Loader2 size={18} className="animate-spin" /> : <Mail size={18} />}
+                        Enviar Link de Redefinição
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <div className="text-center py-4">
+                    <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                      <Mail size={32} className="text-secondary" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-lighter mb-2">Verifique seu e-mail</h3>
+                    <p className="text-sm text-gray mb-1">{success}</p>
+                    <p className="text-xs text-gray/70 mt-2">Verifique também a pasta de spam.</p>
+                  </div>
+                )}
+                <p className="text-sm text-gray text-center mt-6">
+                  <button onClick={() => switchMode('login')} className="text-primary font-semibold hover:text-primary-light">
+                    Voltar ao login
+                  </button>
+                </p>
+              </div>
+            </div>
+          ) : mode === 'verify-pending' ? (
+            <div className="max-w-md mx-auto animate-fade-in">
+              <div className="rounded-2xl glass p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <Mail size={32} className="text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-lighter mb-2">Confirme seu e-mail</h2>
+                <p className="text-sm text-gray mb-2">Enviamos um link de verificação para:</p>
+                <p className="text-sm font-semibold text-primary mb-6">{pendingEmail}</p>
+                <p className="text-xs text-gray/70 mb-6">Clique no link enviado para ativar sua conta. Verifique também a pasta de spam.</p>
+                {error && (
+                  <div className="flex items-start gap-2 text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">
+                    <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
+                {success && (
+                  <div className="flex items-center gap-2 text-secondary text-sm mb-4 p-3 rounded-xl bg-secondary/10">
+                    <CheckCircle2 size={16} className="shrink-0" />
+                    <span>{success}</span>
+                  </div>
+                )}
+                <button onClick={handleResendVerification} disabled={resending}
+                  className="w-full py-3 rounded-xl border border-dark-lighter text-gray-lighter font-bold text-sm hover:bg-dark-lighter transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                  {resending ? <Loader2 size={18} className="animate-spin" /> : <Mail size={18} />}
+                  Reenviar e-mail de verificação
+                </button>
+                <p className="text-sm text-gray text-center mt-6">
+                  <button onClick={() => switchMode('login')} className="text-primary font-semibold hover:text-primary-light">
+                    Voltar ao login
+                  </button>
+                </p>
+              </div>
+            </div>
+          ) : null}
 
           <footer className="text-center py-8 border-t border-dark-lighter mt-16">
             <p className="text-sm text-gray">

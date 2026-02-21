@@ -34,7 +34,7 @@ export async function POST() {
 
     for (const u of users) {
       await db.execute({
-        sql: 'INSERT INTO users (id, name, email, password, role, avatar, phone, trainer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        sql: 'INSERT INTO users (id, name, email, password, role, avatar, phone, trainer_id, email_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)',
         args: u,
       });
     }

@@ -16,7 +16,7 @@ interface AppState {
 
   // Auth actions
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; email: string; password: string; role: string; phone?: string }) => Promise<void>;
+  register: (data: { name: string; email: string; password: string; role: string; phone?: string; cref?: string }) => Promise<void>;
   logout: () => void;
   restoreSession: () => Promise<void>;
 
@@ -99,8 +99,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   register: async (data) => {
     set({ loading: true });
     try {
-      const { user } = await api.apiRegister(data);
-      set({ currentUser: user, loading: false });
+      await api.apiRegister(data);
+      set({ loading: false });
     } catch (e) {
       set({ loading: false });
       throw e;

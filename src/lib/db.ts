@@ -17,6 +17,11 @@ export async function initializeDatabase() {
       role TEXT NOT NULL CHECK(role IN ('trainer', 'student')),
       avatar TEXT DEFAULT '💪',
       phone TEXT,
+      cref TEXT,
+      email_verified INTEGER DEFAULT 0,
+      verification_token TEXT,
+      reset_token TEXT,
+      reset_token_expires TEXT,
       created_at TEXT DEFAULT (datetime('now')),
       trainer_id TEXT REFERENCES users(id)
     );
@@ -101,4 +106,16 @@ export async function initializeDatabase() {
       completed_at TEXT DEFAULT (datetime('now'))
     );
   `);
+
+  // Migrations: add new columns to existing tables (safe to re-run)
+  const migrations = [
+    "ALTER TABLE users ADD COLUMN cref TEXT",
+    "ALTER TABLE users ADD COLUMN email_verified INTEGER DEFAULT 0",
+    "ALTER TABLE users ADD COLUMN verification_token TEXT",
+    "ALTER TABLE users ADD COLUMN reset_token TEXT",
+    "ALTER TABLE users ADD COLUMN reset_token_expires TEXT",
+  ];
+  for (const sql of migrations) {
+    try { await db.execute(sql); } catch { /* column already exists */ }
+  }
 }

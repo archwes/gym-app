@@ -57,10 +57,23 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
 // --- Auth ---
 export async function apiLogin(email: string, password: string): Promise<{ token: string; user: User }> {
-  const data = await request<{ token: string; user: User }>('/api/auth/login', {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
+  const data = await res.json();
+  if (!res.ok) {
+    const err = new Error(data.error || `Erro ${res.status}`) as Error & {
+      requiresVerification?: boolean;
+      email?: string;
+    };
+    if (data.requiresVerification) {
+      err.requiresVerification = true;
+      err.email = data.email;
+    }
+    throw err;
+  }
   setToken(data.token);
   return data;
 }
@@ -72,13 +85,41 @@ export async function apiRegister(payload: {
   role: string;
   phone?: string;
   trainerId?: string;
-}): Promise<{ token: string; user: User }> {
-  const data = await request<{ token: string; user: User }>('/api/auth/register', {
+  cref?: string;
+}): Promise<{ message: string; requiresVerification: boolean; email: string }> {
+  const res = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  setToken(data.token);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Erro ${res.status}`);
   return data;
+}
+
+export async function apiForgotPassword(email: string): Promise<{ message: string }> {
+  return request<{ message: string }>('/api/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function apiResetPassword(token: string, password: string): Promise<{ message: string }> {
+  return request<{ message: string }>('/api/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, password }),
+  });
+}
+
+export async function apiResendVerification(email: string): Promise<{ message: string }> {
+  return request<{ message: string }>('/api/auth/resend-verification', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function apiVerifyEmail(token: string): Promise<{ message: string; verified?: boolean; alreadyVerified?: boolean }> {
+  return request<{ message: string; verified?: boolean; alreadyVerified?: boolean }>(`/api/auth/verify-email?token=${token}`);
 }
 
 export async function apiGetMe(): Promise<User> {

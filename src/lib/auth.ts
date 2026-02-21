@@ -27,7 +27,7 @@ export async function getAuthUser(request: NextRequest): Promise<AuthUser | null
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
     const result = await db.execute({
-      sql: 'SELECT id, name, email, role, avatar, phone, created_at, trainer_id FROM users WHERE id = ?',
+      sql: 'SELECT id, name, email, role, avatar, phone, cref, email_verified, created_at, trainer_id FROM users WHERE id = ?',
       args: [decoded.userId],
     });
     if (result.rows.length === 0) return null;

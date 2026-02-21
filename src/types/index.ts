@@ -7,6 +7,8 @@ export interface User {
   role: UserRole;
   avatar: string;
   phone?: string;
+  cref?: string;
+  email_verified?: number;
   created_at: string;
   trainer_id?: string | null;
 }

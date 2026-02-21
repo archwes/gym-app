@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import db from '@/lib/db';
 import { getAuthUser, json, error } from '@/lib/auth';
+import { sendWelcomeStudentEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   const user = await getAuthUser(request);
@@ -58,16 +59,25 @@ export async function POST(request: NextRequest) {
   const tempPassword = Math.random().toString(36).slice(-8);
   const hashed = bcrypt.hashSync(tempPassword, 10);
   const id = uuidv4();
+  const verificationToken = uuidv4();
 
   await db.execute({
-    sql: 'INSERT INTO users (id, name, email, password, role, avatar, phone, trainer_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    args: [id, name, email, hashed, 'student', '🏋️', phone || null, user.id],
+    sql: `INSERT INTO users (id, name, email, password, role, avatar, phone, trainer_id, email_verified, verification_token)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`,
+    args: [id, name, email, hashed, 'student', '🏋️', phone || null, user.id, verificationToken],
   });
+
+  // Send welcome email with verification + temp password
+  try {
+    await sendWelcomeStudentEmail(email, name, user.name, tempPassword, verificationToken);
+  } catch {
+    // Email sending failed
+  }
 
   // Notification for the new student (for when they log in)
   await db.execute({
     sql: 'INSERT INTO notifications (id, user_id, title, message, type, is_read) VALUES (?, ?, ?, ?, ?, 0)',
-    args: [uuidv4(), id, 'Bem-vindo ao FitPro!', `Sua conta foi criada pelo personal ${user.name}. Altere sua senha e informações pessoais nas configurações.`, 'info'],
+    args: [uuidv4(), id, 'Bem-vindo ao FitPro!', `Sua conta foi criada pelo personal ${user.name}. Confirme seu e-mail para acessar a plataforma. Altere sua senha temporária nas configurações.`, 'info'],
   });
 
   const result = await db.execute({
