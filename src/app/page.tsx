@@ -248,8 +248,8 @@ export default function HomePage() {
               </div>
             </>
           ) : mode === 'login' ? (
-            <div className="max-w-md mx-auto animate-fade-in">
-              <div className="rounded-2xl glass p-8">
+            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8">
                 <h2 className="text-2xl font-bold text-gray-lighter mb-2">Bem-vindo de volta</h2>
                 <p className="text-sm text-gray mb-6">Entre com suas credenciais</p>
                 {error && (
@@ -298,8 +298,8 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'register' ? (
-            <div className="max-w-md mx-auto animate-fade-in">
-              <div className="rounded-2xl glass p-8">
+            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8">
                 <h2 className="text-2xl font-bold text-gray-lighter mb-2">Criar conta</h2>
                 <p className="text-sm text-gray mb-6">Preencha seus dados para começar</p>
                 {error && (
@@ -409,8 +409,8 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'forgot' ? (
-            <div className="max-w-md mx-auto animate-fade-in">
-              <div className="rounded-2xl glass p-8">
+            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8">
                 {!forgotSent ? (
                   <>
                     <h2 className="text-2xl font-bold text-gray-lighter mb-2">Esqueci minha senha</h2>
@@ -455,8 +455,8 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'verify-pending' ? (
-            <div className="max-w-md mx-auto animate-fade-in">
-              <div className="rounded-2xl glass p-8 text-center">
+            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8 text-center">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <Mail size={32} className="text-primary" />
                 </div>
