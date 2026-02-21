@@ -17,7 +17,7 @@ export async function initializeDatabase() {
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
-      role TEXT NOT NULL CHECK(role IN ('trainer', 'student')),
+      role TEXT NOT NULL CHECK(role IN ('trainer', 'student', 'admin')),
       avatar TEXT DEFAULT '💪',
       phone TEXT,
       cref TEXT,
@@ -118,6 +118,36 @@ export async function initializeDatabase() {
     "ALTER TABLE users ADD COLUMN reset_token TEXT",
     "ALTER TABLE users ADD COLUMN reset_token_expires TEXT",
   ];
+
+  // Migrate users table to allow admin role
+  try {
+    // Check if the current CHECK constraint blocks 'admin'
+    // We recreate the table to update the constraint
+    const tableInfo = await db.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'");
+    const createSql = tableInfo.rows[0]?.sql as string || '';
+    if (createSql.includes("'trainer', 'student')") && !createSql.includes("'admin'")) {
+      await db.execute(`CREATE TABLE IF NOT EXISTS users_new (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL CHECK(role IN ('trainer', 'student', 'admin')),
+        avatar TEXT DEFAULT '💪',
+        phone TEXT,
+        cref TEXT,
+        email_verified INTEGER DEFAULT 0,
+        verification_token TEXT,
+        reset_token TEXT,
+        reset_token_expires TEXT,
+        created_at TEXT DEFAULT (datetime('now')),
+        trainer_id TEXT REFERENCES users(id)
+      )`);
+      await db.execute("INSERT INTO users_new SELECT id, name, email, password, role, avatar, phone, cref, email_verified, verification_token, reset_token, reset_token_expires, created_at, trainer_id FROM users");
+      await db.execute("DROP TABLE users");
+      await db.execute("ALTER TABLE users_new RENAME TO users");
+    }
+  } catch { /* migration already done or not needed */ }
+
   for (const sql of migrations) {
     try { await db.execute(sql); } catch { /* column already exists */ }
   }

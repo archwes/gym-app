@@ -13,10 +13,12 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!currentUser) {
       router.push('/');
+    } else if (currentUser.role === 'admin') {
+      router.push('/admin');
     }
   }, [currentUser, router]);
 
-  if (!currentUser) return null;
+  if (!currentUser || currentUser.role === 'admin') return null;
 
   return currentUser.role === 'trainer' ? <TrainerDashboard /> : <StudentDashboard />;
 }

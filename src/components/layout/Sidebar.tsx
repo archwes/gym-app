@@ -17,6 +17,8 @@ import {
   X,
   ChevronRight,
   UserCircle,
+  ShieldCheck,
+  ClipboardList,
 } from 'lucide-react';
 
 const trainerLinks = [
@@ -33,6 +35,14 @@ const studentLinks = [
   { href: '/progresso', label: 'Progresso', icon: TrendingUp },
   { href: '/agenda', label: 'Agenda', icon: Calendar },
   { href: '/exercicios', label: 'Exercícios', icon: BookOpen },
+];
+
+const adminLinks = [
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/usuarios', label: 'Usuários', icon: Users },
+  { href: '/admin/exercicios', label: 'Exercícios', icon: BookOpen },
+  { href: '/admin/treinos', label: 'Treinos', icon: Dumbbell },
+  { href: '/admin/sessoes', label: 'Sessões', icon: ClipboardList },
 ];
 
 export default function Sidebar() {
@@ -62,7 +72,7 @@ export default function Sidebar() {
 
   if (!currentUser) return null;
 
-  const links = currentUser.role === 'trainer' ? trainerLinks : studentLinks;
+  const links = currentUser.role === 'admin' ? adminLinks : currentUser.role === 'trainer' ? trainerLinks : studentLinks;
   const unreadCount = notifications.filter(
     (n) => n.user_id === currentUser.id && !n.is_read
   ).length;
@@ -103,7 +113,7 @@ export default function Sidebar() {
         </button>
         {/* Logo */}
         <div className="p-6 border-b border-dark-lighter">
-          <Link href="/dashboard" className="flex items-center gap-3">
+          <Link href={currentUser.role === 'admin' ? '/admin' : '/dashboard'} className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <Dumbbell size={22} className="text-white" />
             </div>
@@ -125,7 +135,7 @@ export default function Sidebar() {
                 {currentUser.name}
               </p>
               <p className="text-xs text-gray capitalize">
-                {currentUser.role === 'trainer' ? 'Personal Trainer' : 'Aluno'}
+                {currentUser.role === 'admin' ? 'Administrador' : currentUser.role === 'trainer' ? 'Personal Trainer' : 'Aluno'}
               </p>
             </div>
           </div>

@@ -320,3 +320,80 @@ export async function apiGetTrainerDashboard(): Promise<TrainerDashboardData> {
 export async function apiGetStudentDashboard(): Promise<StudentDashboardData> {
   return request<StudentDashboardData>('/api/dashboard/student');
 }
+
+// --- Admin ---
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminDashboard(): Promise<any> {
+  return request('/api/admin/dashboard');
+}
+
+export async function apiAdminGetUsers(params?: { search?: string; role?: string }): Promise<User[]> {
+  const sp = new URLSearchParams();
+  if (params?.search) sp.set('search', params.search);
+  if (params?.role) sp.set('role', params.role);
+  const qs = sp.toString();
+  return request<User[]>(`/api/admin/users${qs ? `?${qs}` : ''}`);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminCreateUser(data: any): Promise<User> {
+  return request<User>('/api/admin/users', { method: 'POST', body: JSON.stringify(data) });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminUpdateUser(id: string, data: any): Promise<User> {
+  return request<User>(`/api/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function apiAdminDeleteUser(id: string): Promise<void> {
+  await request(`/api/admin/users/${id}`, { method: 'DELETE' });
+}
+
+export async function apiAdminGetExercises(params?: { search?: string; muscle_group?: string }): Promise<Exercise[]> {
+  const sp = new URLSearchParams();
+  if (params?.search) sp.set('search', params.search);
+  if (params?.muscle_group) sp.set('muscle_group', params.muscle_group);
+  const qs = sp.toString();
+  return request<Exercise[]>(`/api/admin/exercises${qs ? `?${qs}` : ''}`);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminCreateExercise(data: any): Promise<Exercise> {
+  return request<Exercise>('/api/admin/exercises', { method: 'POST', body: JSON.stringify(data) });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminUpdateExercise(id: string, data: any): Promise<Exercise> {
+  return request<Exercise>(`/api/admin/exercises/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+}
+
+export async function apiAdminDeleteExercise(id: string): Promise<void> {
+  await request(`/api/admin/exercises/${id}`, { method: 'DELETE' });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminGetWorkouts(params?: { search?: string }): Promise<any[]> {
+  const sp = new URLSearchParams();
+  if (params?.search) sp.set('search', params.search);
+  const qs = sp.toString();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return request<any[]>(`/api/admin/workouts${qs ? `?${qs}` : ''}`);
+}
+
+export async function apiAdminDeleteWorkout(id: string): Promise<void> {
+  await request('/api/admin/workouts', { method: 'DELETE', body: JSON.stringify({ id }) });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiAdminGetSessions(params?: { search?: string; status?: string }): Promise<any[]> {
+  const sp = new URLSearchParams();
+  if (params?.search) sp.set('search', params.search);
+  if (params?.status) sp.set('status', params.status);
+  const qs = sp.toString();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return request<any[]>(`/api/admin/sessions${qs ? `?${qs}` : ''}`);
+}
+
+export async function apiAdminDeleteSession(id: string): Promise<void> {
+  await request('/api/admin/sessions', { method: 'DELETE', body: JSON.stringify({ id }) });
+}

@@ -18,6 +18,7 @@ export async function POST() {
     const hashPassword = (pw: string) => bcrypt.hashSync(pw, 10);
 
     // --- Users ---
+    const adminId = uuidv4();
     const trainerId = uuidv4();
     const student1Id = uuidv4();
     const student2Id = uuidv4();
@@ -25,6 +26,7 @@ export async function POST() {
     const student4Id = uuidv4();
 
     const users = [
+      [adminId, 'Administrador', 'admin@fitpro.com', hashPassword('123456'), 'admin', '👑', '(11) 90000-0000', null],
       [trainerId, 'Carlos Silva', 'carlos@fitpro.com', hashPassword('123456'), 'trainer', '💪', '(11) 99999-1234', null],
       [student1Id, 'Ana Oliveira', 'ana@email.com', hashPassword('123456'), 'student', '🏋️‍♀️', '(11) 98888-5678', trainerId],
       [student2Id, 'Pedro Santos', 'pedro@email.com', hashPassword('123456'), 'student', '🏃‍♂️', '(11) 97777-9012', trainerId],

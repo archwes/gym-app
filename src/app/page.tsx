@@ -43,7 +43,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (currentUser) {
-      router.push('/dashboard');
+      router.push(currentUser.role === 'admin' ? '/admin' : '/dashboard');
     }
   }, [currentUser, router]);
 
@@ -62,7 +62,7 @@ export default function HomePage() {
     setError('');
     try {
       await login(email, password);
-      router.push('/dashboard');
+      // redirect is handled by the useEffect watching currentUser
     } catch (err: unknown) {
       const typedErr = err as Error & { requiresVerification?: boolean; email?: string };
       if (typedErr.requiresVerification) {
@@ -117,7 +117,7 @@ export default function HomePage() {
     setError('');
     try {
       await login(demoEmail, '123456');
-      router.push('/dashboard');
+      // redirect is handled by the useEffect watching currentUser
     } catch (err: unknown) {
       const typedErr = err as Error & { requiresVerification?: boolean; email?: string };
       if (typedErr.requiresVerification) {
