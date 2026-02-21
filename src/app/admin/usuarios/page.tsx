@@ -10,6 +10,7 @@ import {
   apiAdminDeleteUser,
 } from '@/lib/api';
 import type { User, UserRole } from '@/types';
+import { formatPhone, formatCREF, getPasswordStrength } from '@/lib/format';
 import PageHeader from '@/components/ui/PageHeader';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
@@ -23,6 +24,8 @@ import {
   AlertCircle,
   Check,
   Filter,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 const roleLabels: Record<string, string> = { admin: 'Admin', trainer: 'Trainer', student: 'Aluno' };
@@ -51,6 +54,7 @@ export default function AdminUsuariosPage() {
   const [formPhone, setFormPhone] = useState('');
   const [formCref, setFormCref] = useState('');
   const [formVerified, setFormVerified] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -78,7 +82,8 @@ export default function AdminUsuariosPage() {
   const resetForm = () => {
     setFormName(''); setFormEmail(''); setFormPassword('');
     setFormRole('student'); setFormPhone(''); setFormCref('');
-    setFormVerified(false); setErrorMsg(''); setSuccessMsg('');
+    setFormVerified(false); setShowPassword(false);
+    setErrorMsg(''); setSuccessMsg('');
     setEditing(null);
   };
 
@@ -93,8 +98,8 @@ export default function AdminUsuariosPage() {
     setFormName(u.name);
     setFormEmail(u.email);
     setFormRole(u.role);
-    setFormPhone(u.phone || '');
-    setFormCref(u.cref || '');
+    setFormPhone(u.phone ? formatPhone(u.phone) : '');
+    setFormCref(u.cref ? formatCREF(u.cref) : '');
     setFormVerified(!!u.email_verified);
     setShowModal(true);
   };
@@ -192,6 +197,7 @@ export default function AdminUsuariosPage() {
                   <th className="px-4 py-3 text-gray font-semibold">Usuário</th>
                   <th className="px-4 py-3 text-gray font-semibold hidden sm:table-cell">Email</th>
                   <th className="px-4 py-3 text-gray font-semibold">Papel</th>
+                  <th className="px-4 py-3 text-gray font-semibold hidden lg:table-cell">Telefone</th>
                   <th className="px-4 py-3 text-gray font-semibold hidden md:table-cell">Verificado</th>
                   <th className="px-4 py-3 text-gray font-semibold text-right">Ações</th>
                 </tr>
@@ -213,6 +219,7 @@ export default function AdminUsuariosPage() {
                         {roleLabels[u.role] || u.role}
                       </span>
                     </td>
+                    <td className="px-4 py-3 text-gray text-sm hidden lg:table-cell">{u.phone ? formatPhone(u.phone) : '—'}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       {u.email_verified ? (
                         <Check size={16} className="text-secondary" />
@@ -261,7 +268,25 @@ export default function AdminUsuariosPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-lighter mb-1">Senha {editing && <span className="text-gray text-xs">(deixe em branco para manter)</span>}</label>
-            <input type="password" value={formPassword} onChange={(e) => setFormPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:border-primary focus:outline-none" {...(!editing ? { required: true } : {})} />
+            <div className="relative">
+              <input type={showPassword ? 'text' : 'password'} value={formPassword} onChange={(e) => setFormPassword(e.target.value)} className="w-full px-4 py-2.5 pr-10 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:border-primary focus:outline-none" {...(!editing ? { required: true } : {})} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray hover:text-gray-lighter transition-colors">
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {formPassword && (() => {
+              const { score, label, color } = getPasswordStrength(formPassword);
+              return (
+                <div className="mt-2">
+                  <div className="flex gap-1 mb-1">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div key={i} className="h-1 flex-1 rounded-full transition-colors duration-300" style={{ backgroundColor: i < score ? color : 'var(--color-dark-lighter)' }} />
+                    ))}
+                  </div>
+                  <p className="text-xs font-medium" style={{ color }}>{label}</p>
+                </div>
+              );
+            })()}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -274,13 +299,13 @@ export default function AdminUsuariosPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-lighter mb-1">Telefone</label>
-              <input type="text" value={formPhone} onChange={(e) => setFormPhone(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:border-primary focus:outline-none" />
+              <input type="tel" value={formPhone} onChange={(e) => setFormPhone(formatPhone(e.target.value))} placeholder="(11) 99999-0000" className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:border-primary focus:outline-none" />
             </div>
           </div>
           {formRole === 'trainer' && (
             <div>
               <label className="block text-sm font-medium text-gray-lighter mb-1">CREF</label>
-              <input type="text" value={formCref} onChange={(e) => setFormCref(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:border-primary focus:outline-none" />
+              <input type="text" value={formCref} onChange={(e) => setFormCref(formatCREF(e.target.value))} placeholder="000000-G/SP" className="w-full px-4 py-2.5 rounded-xl bg-dark border border-dark-lighter text-gray-lighter text-sm focus:border-primary focus:outline-none" />
             </div>
           )}
           <label className="flex items-center gap-2 cursor-pointer">
