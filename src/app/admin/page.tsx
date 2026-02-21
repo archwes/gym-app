@@ -96,23 +96,28 @@ export default function AdminDashboardPage() {
           {recentUsers.length === 0 ? (
             <p className="text-sm text-gray">Nenhum usuário recente.</p>
           ) : (
-            <div className="space-y-2">
-              {recentUsers.map((u) => (
-                <div key={u.id} className="flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center text-sm">
-                    {u.avatar}
+            <div className="relative">
+              <div className="space-y-2">
+                {recentUsers.slice(0, 4).map((u, idx) => (
+                  <div key={u.id} className={`flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 ${idx === 3 ? 'opacity-40' : ''}`}>
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center text-sm">
+                      {u.avatar}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-lighter truncate">{u.name}</p>
+                      <p className="text-xs text-gray truncate">{u.email}</p>
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      u.role === 'admin' ? 'bg-accent/20 text-accent' : u.role === 'trainer' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'
+                    }`}>
+                      {u.role === 'admin' ? 'Admin' : u.role === 'trainer' ? 'Trainer' : 'Aluno'}
+                    </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-lighter truncate">{u.name}</p>
-                    <p className="text-xs text-gray truncate">{u.email}</p>
-                  </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                    u.role === 'admin' ? 'bg-accent/20 text-accent' : u.role === 'trainer' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'
-                  }`}>
-                    {u.role === 'admin' ? 'Admin' : u.role === 'trainer' ? 'Trainer' : 'Aluno'}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
+              {recentUsers.length > 3 && (
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-light to-transparent pointer-events-none rounded-b-2xl" />
+              )}
             </div>
           )}
         </div>
@@ -128,23 +133,28 @@ export default function AdminDashboardPage() {
           {todaySessions.length === 0 ? (
             <p className="text-sm text-gray">Nenhuma sessão agendada para hoje.</p>
           ) : (
-            <div className="space-y-2">
-              {todaySessions.map((s) => (
-                <div key={s.id} className="flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center">
-                    <Calendar size={16} className="text-accent" />
+            <div className="relative">
+              <div className="space-y-2">
+                {todaySessions.slice(0, 4).map((s, idx) => (
+                  <div key={s.id} className={`flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 ${idx === 3 ? 'opacity-40' : ''}`}>
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent/30 to-primary/30 flex items-center justify-center">
+                      <Calendar size={16} className="text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-lighter truncate">{s.trainer_name} → {s.student_name}</p>
+                      <p className="text-xs text-gray">{s.time} • {s.type}</p>
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                      s.status === 'completed' ? 'bg-secondary/20 text-secondary' : s.status === 'cancelled' ? 'bg-danger/20 text-danger' : 'bg-primary/20 text-primary'
+                    }`}>
+                      {s.status === 'completed' ? 'Concluída' : s.status === 'cancelled' ? 'Cancelada' : 'Agendada'}
+                    </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-lighter truncate">{s.trainer_name} → {s.student_name}</p>
-                    <p className="text-xs text-gray">{s.time} • {s.type}</p>
-                  </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
-                    s.status === 'completed' ? 'bg-secondary/20 text-secondary' : s.status === 'cancelled' ? 'bg-danger/20 text-danger' : 'bg-primary/20 text-primary'
-                  }`}>
-                    {s.status === 'completed' ? 'Concluída' : s.status === 'cancelled' ? 'Cancelada' : 'Agendada'}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
+              {todaySessions.length > 3 && (
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-dark-light to-transparent pointer-events-none rounded-b-2xl" />
+              )}
             </div>
           )}
         </div>
