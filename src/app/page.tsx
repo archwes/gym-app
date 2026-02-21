@@ -248,17 +248,17 @@ export default function HomePage() {
               </div>
             </>
           ) : mode === 'login' ? (
-            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
-              <div className="rounded-2xl glass p-6 sm:p-8">
-                <h2 className="text-2xl font-bold text-gray-lighter mb-2">Bem-vindo de volta</h2>
-                <p className="text-sm text-gray mb-6">Entre com suas credenciais</p>
+            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-lighter mb-2">Bem-vindo de volta</h2>
+                <p className="text-sm sm:text-base text-gray mb-6">Entre com suas credenciais</p>
                 {error && (
                   <div className="flex items-start gap-2 text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">
                     <AlertCircle size={16} className="shrink-0 mt-0.5" />
                     <span>{error}</span>
                   </div>
                 )}
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Email</label>
                     <div className="relative">
@@ -298,17 +298,17 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'register' ? (
-            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
-              <div className="rounded-2xl glass p-6 sm:p-8">
-                <h2 className="text-2xl font-bold text-gray-lighter mb-2">Criar conta</h2>
-                <p className="text-sm text-gray mb-6">Preencha seus dados para começar</p>
+            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-lighter mb-2">Criar conta</h2>
+                <p className="text-sm sm:text-base text-gray mb-6">Preencha seus dados para começar</p>
                 {error && (
                   <div className="flex items-start gap-2 text-danger text-sm mb-4 p-3 rounded-xl bg-danger/10">
                     <AlertCircle size={16} className="shrink-0 mt-0.5" />
                     <span>{error}</span>
                   </div>
                 )}
-                <form onSubmit={handleRegister} className="space-y-4">
+                <form onSubmit={handleRegister} className="space-y-4 sm:space-y-5">
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Nome completo</label>
                     <div className="relative">
@@ -409,8 +409,8 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'forgot' ? (
-            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
-              <div className="rounded-2xl glass p-6 sm:p-8">
+            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
                 {!forgotSent ? (
                   <>
                     <h2 className="text-2xl font-bold text-gray-lighter mb-2">Esqueci minha senha</h2>
@@ -421,7 +421,7 @@ export default function HomePage() {
                         <span>{error}</span>
                       </div>
                     )}
-                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <form onSubmit={handleForgotPassword} className="space-y-4 sm:space-y-5">
                       <div>
                         <label className="block text-xs font-medium text-gray mb-1.5">Email</label>
                         <div className="relative">
@@ -455,8 +455,8 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'verify-pending' ? (
-            <div className="max-w-md sm:max-w-lg mx-auto animate-fade-in mb-12">
-              <div className="rounded-2xl glass p-6 sm:p-8 text-center">
+            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+              <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10 text-center">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <Mail size={32} className="text-primary" />
                 </div>

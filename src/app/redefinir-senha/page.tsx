@@ -49,7 +49,7 @@ function ResetPasswordContent() {
   return (
     <div className="min-h-screen bg-dark flex items-center justify-center p-4 flex-1">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
-      <div className="relative max-w-md w-full">
+      <div className="relative max-w-md sm:max-w-lg lg:max-w-xl w-full">
         <div className="text-center mb-8">
           <a href="/" className="inline-flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
@@ -59,7 +59,7 @@ function ResetPasswordContent() {
           </a>
         </div>
 
-        <div className="rounded-2xl glass p-8">
+        <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
           {status === 'success' ? (
             <div className="text-center">
               <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-4">
