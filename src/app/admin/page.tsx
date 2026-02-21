@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { apiAdminDashboard } from '@/lib/api';
 import PageHeader from '@/components/ui/PageHeader';
@@ -86,7 +87,12 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Recent Users */}
         <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
-          <h2 className="text-base sm:text-lg font-bold text-gray-lighter mb-3 sm:mb-4">Usuários Recentes</h2>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-lighter">Usuários Recentes</h2>
+            <Link href="/admin/usuarios" className="text-xs text-primary hover:text-primary-light font-medium">
+              Gerenciar →
+            </Link>
+          </div>
           {recentUsers.length === 0 ? (
             <p className="text-sm text-gray">Nenhum usuário recente.</p>
           ) : (
@@ -113,7 +119,12 @@ export default function AdminDashboardPage() {
 
         {/* Today's Sessions */}
         <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
-          <h2 className="text-base sm:text-lg font-bold text-gray-lighter mb-3 sm:mb-4">Sessões de Hoje</h2>
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-lighter">Sessões de Hoje</h2>
+            <Link href="/admin/sessoes" className="text-xs text-primary hover:text-primary-light font-medium">
+              Gerenciar →
+            </Link>
+          </div>
           {todaySessions.length === 0 ? (
             <p className="text-sm text-gray">Nenhuma sessão agendada para hoje.</p>
           ) : (
