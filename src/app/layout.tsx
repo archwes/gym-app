@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${inter.variable} antialiased`}>
+    <html lang="pt-BR" className="h-full">
+      <body className={`${inter.variable} antialiased min-h-screen flex flex-col`}>
         <AppShell>{children}</AppShell>
       </body>
     </html>

@@ -18,15 +18,16 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-html {
+html, body, #__next {
   scroll-behavior: smooth;
+  min-height: 100vh;
+  height: 100%;
 }
 
 body {
   font-family: var(--font-sans);
   background: var(--color-dark);
   color: var(--color-gray-lighter);
-  min-height: 100vh;
 }
 
 /* Fix form elements for dark theme */

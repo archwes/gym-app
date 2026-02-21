@@ -147,13 +147,13 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark overflow-hidden">
-      <div className="relative">
+    <div className="min-h-screen bg-dark overflow-hidden flex flex-col">
+      <div className="relative flex-1 flex flex-col">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
         <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
 
-        <div className="relative max-w-6xl mx-auto px-4 py-8">
+        <div className="relative max-w-6xl mx-auto px-4 py-8 flex-1 flex flex-col">
           <nav className="flex items-center justify-between mb-16 sm:mb-24">
             <button onClick={() => switchMode('landing')} className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">

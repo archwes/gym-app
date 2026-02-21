@@ -41,11 +41,11 @@ export default function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-dark flex flex-col">
       <Sidebar />
-      <main className="lg:ml-72 min-h-screen">
+      <main className="lg:ml-72 min-h-screen flex-1 flex flex-col">
         <div
-          className={`p-4 pt-16 lg:p-8 lg:pt-8 max-w-7xl mx-auto page-transition ${pageTransition ? 'page-visible' : ''}`}
+          className={`p-4 pt-16 lg:p-8 lg:pt-8 max-w-7xl mx-auto w-full flex-1 page-transition ${pageTransition ? 'page-visible' : ''}`}
         >
           {children}
         </div>
