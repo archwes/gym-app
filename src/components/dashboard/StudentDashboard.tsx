@@ -88,7 +88,7 @@ export default function StudentDashboard() {
         />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4">
         {/* Today's Workout */}
         <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
           <div className="flex items-center justify-between mb-4">

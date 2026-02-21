@@ -83,7 +83,7 @@ export default function AdminDashboardPage() {
         <StatCard title="Não Verificados" value={stats.unverifiedUsers} icon={<XCircle size={24} />} color="danger" href="/admin/usuarios" />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4">
         {/* Recent Users */}
         <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
           <h2 className="text-lg font-bold text-gray-lighter mb-4">Usuários Recentes</h2>
