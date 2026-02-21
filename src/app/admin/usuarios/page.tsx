@@ -194,12 +194,12 @@ export default function AdminUsuariosPage() {
             <table className="w-full text-sm table-fixed">
               <thead>
                 <tr className="border-b border-dark-lighter text-left">
-                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold">Usuário</th>
-                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden sm:table-cell">Email</th>
-                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold">Papel</th>
-                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden lg:table-cell">Telefone</th>
-                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden md:table-cell">Verificado</th>
-                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold text-right">Ações</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold w-[45%] sm:w-[30%]">Usuário</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden sm:table-cell w-[25%]">Email</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold w-[30%] sm:w-[12%]">Papel</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden lg:table-cell w-[13%]">Telefone</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden md:table-cell w-[10%]">Verificado</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold text-right w-[25%] sm:w-[10%]">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-dark-lighter/50">
