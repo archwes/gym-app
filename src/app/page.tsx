@@ -248,7 +248,7 @@ export default function HomePage() {
               </div>
             </>
           ) : mode === 'login' ? (
-            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+            <div className="max-w-lg sm:max-w-xl lg:max-w-2xl mx-auto animate-fade-in mb-12">
               <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-lighter mb-2">Bem-vindo de volta</h2>
                 <p className="text-sm sm:text-base text-gray mb-6">Entre com suas credenciais</p>
@@ -298,7 +298,7 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'register' ? (
-            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+            <div className="max-w-lg sm:max-w-xl lg:max-w-2xl mx-auto animate-fade-in mb-12">
               <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-lighter mb-2">Criar conta</h2>
                 <p className="text-sm sm:text-base text-gray mb-6">Preencha seus dados para começar</p>
@@ -409,7 +409,7 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'forgot' ? (
-            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+            <div className="max-w-lg sm:max-w-xl lg:max-w-2xl mx-auto animate-fade-in mb-12">
               <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10">
                 {!forgotSent ? (
                   <>
@@ -455,7 +455,7 @@ export default function HomePage() {
               </div>
             </div>
           ) : mode === 'verify-pending' ? (
-            <div className="max-w-md sm:max-w-lg lg:max-w-xl mx-auto animate-fade-in mb-12">
+            <div className="max-w-lg sm:max-w-xl lg:max-w-2xl mx-auto animate-fade-in mb-12">
               <div className="rounded-2xl glass p-6 sm:p-8 lg:p-10 text-center">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <Mail size={32} className="text-primary" />
