@@ -11,6 +11,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "FitPro - Gestão de Academia",
   description: "Aplicativo completo para gestão de academia, personal trainers e alunos",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
