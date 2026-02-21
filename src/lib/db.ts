@@ -126,7 +126,9 @@ export async function initializeDatabase() {
     const tableInfo = await db.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'");
     const createSql = tableInfo.rows[0]?.sql as string || '';
     if (createSql.includes("'trainer', 'student')") && !createSql.includes("'admin'")) {
-      await db.execute(`CREATE TABLE IF NOT EXISTS users_new (
+      await db.execute("PRAGMA foreign_keys = OFF");
+      await db.execute("DROP TABLE IF EXISTS users_new");
+      await db.execute(`CREATE TABLE users_new (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
@@ -145,6 +147,7 @@ export async function initializeDatabase() {
       await db.execute("INSERT INTO users_new SELECT id, name, email, password, role, avatar, phone, cref, email_verified, verification_token, reset_token, reset_token_expires, created_at, trainer_id FROM users");
       await db.execute("DROP TABLE users");
       await db.execute("ALTER TABLE users_new RENAME TO users");
+      await db.execute("PRAGMA foreign_keys = ON");
     }
   } catch { /* migration already done or not needed */ }
 

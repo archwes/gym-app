@@ -14,8 +14,12 @@ export async function POST() {
     const createSql = (tableInfo.rows[0]?.sql as string) || '';
 
     if (!createSql.includes("'admin'")) {
+      // Disable foreign keys so we can drop the users table
+      await db.execute("PRAGMA foreign_keys = OFF");
+
       // Need to recreate the table with updated CHECK constraint
-      await db.execute(`CREATE TABLE IF NOT EXISTS users_new (
+      await db.execute("DROP TABLE IF EXISTS users_new");
+      await db.execute(`CREATE TABLE users_new (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
@@ -44,6 +48,9 @@ export async function POST() {
       await db.execute(`INSERT OR IGNORE INTO users_new (${colList}) SELECT ${colList} FROM users`);
       await db.execute("DROP TABLE users");
       await db.execute("ALTER TABLE users_new RENAME TO users");
+
+      // Re-enable foreign keys
+      await db.execute("PRAGMA foreign_keys = ON");
     }
 
     // Check if admin already exists
