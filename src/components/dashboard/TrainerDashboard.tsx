@@ -36,7 +36,7 @@ export default function TrainerDashboard() {
       />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <StatCard
           title="Alunos Ativos"
           value={students.length}
@@ -71,11 +71,11 @@ export default function TrainerDashboard() {
         />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Today's Schedule */}
-        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-lighter">Agenda de Hoje</h2>
+        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-lighter">Agenda de Hoje</h2>
             <Link href="/agenda" className="text-xs text-primary hover:text-primary-light font-medium">
               Ver tudo →
             </Link>
@@ -118,9 +118,9 @@ export default function TrainerDashboard() {
         </div>
 
         {/* Recent Students */}
-        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-lighter">Alunos Recentes</h2>
+        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-lighter">Alunos Recentes</h2>
             <Link href="/alunos" className="text-xs text-primary hover:text-primary-light font-medium">
               Ver todos →
             </Link>
@@ -166,7 +166,7 @@ export default function TrainerDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 animate-fade-in">
+      <div className="mt-4 sm:mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 animate-fade-in">
         {[
           { href: '/treinos', label: 'Novo Treino', icon: <Dumbbell size={20} />, color: 'bg-primary/10 text-primary' },
           { href: '/alunos', label: 'Ver Alunos', icon: <Users size={20} />, color: 'bg-secondary/10 text-secondary' },

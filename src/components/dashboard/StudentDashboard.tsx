@@ -55,7 +55,7 @@ export default function StudentDashboard() {
       />
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <StatCard
           title="Treinos Ativos"
           value={myPlans.length}
@@ -88,11 +88,11 @@ export default function StudentDashboard() {
         />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Today's Workout */}
-        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-lighter">
+        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-lighter">
               Treino de Hoje - {today}
             </h2>
             <Link href="/meus-treinos" className="text-xs text-primary hover:text-primary-light font-medium">
@@ -135,9 +135,9 @@ export default function StudentDashboard() {
         </div>
 
         {/* Progress Overview */}
-        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-lighter">Progresso</h2>
+        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-lighter">Progresso</h2>
             <Link href="/progresso" className="text-xs text-primary hover:text-primary-light font-medium">
               Ver detalhes →
             </Link>
@@ -195,8 +195,8 @@ export default function StudentDashboard() {
 
       {/* Upcoming Sessions */}
       {mySessions.length > 0 && (
-        <div className="mt-6 rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <h2 className="text-lg font-bold text-gray-lighter mb-4">Próximas Sessões</h2>
+        <div className="mt-4 sm:mt-6 rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <h2 className="text-base sm:text-lg font-bold text-gray-lighter mb-3 sm:mb-4">Próximas Sessões</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {mySessions.slice(0, 3).map((session) => (
               <div

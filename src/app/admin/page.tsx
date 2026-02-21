@@ -64,7 +64,7 @@ export default function AdminDashboardPage() {
   const { stats, recentUsers, todaySessions } = data;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <PageHeader
         title="Painel Administrativo"
         subtitle="Visão geral de toda a plataforma"
@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
       />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
         <StatCard title="Usuários" value={stats.totalUsers} icon={<Users size={24} />} color="primary" href="/admin/usuarios" />
         <StatCard title="Personal Trainers" value={stats.totalTrainers} icon={<Users size={24} />} color="secondary" href="/admin/usuarios" />
         <StatCard title="Alunos" value={stats.totalStudents} icon={<Users size={24} />} color="accent" href="/admin/usuarios" />
@@ -83,10 +83,10 @@ export default function AdminDashboardPage() {
         <StatCard title="Não Verificados" value={stats.unverifiedUsers} icon={<XCircle size={24} />} color="danger" href="/admin/usuarios" />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Recent Users */}
-        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <h2 className="text-lg font-bold text-gray-lighter mb-4">Usuários Recentes</h2>
+        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <h2 className="text-base sm:text-lg font-bold text-gray-lighter mb-3 sm:mb-4">Usuários Recentes</h2>
           {recentUsers.length === 0 ? (
             <p className="text-sm text-gray">Nenhum usuário recente.</p>
           ) : (
@@ -112,8 +112,8 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Today's Sessions */}
-        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-5 animate-fade-in">
-          <h2 className="text-lg font-bold text-gray-lighter mb-4">Sessões de Hoje</h2>
+        <div className="rounded-2xl bg-dark-light border border-dark-lighter p-3 sm:p-5 animate-fade-in">
+          <h2 className="text-base sm:text-lg font-bold text-gray-lighter mb-3 sm:mb-4">Sessões de Hoje</h2>
           {todaySessions.length === 0 ? (
             <p className="text-sm text-gray">Nenhuma sessão agendada para hoje.</p>
           ) : (
