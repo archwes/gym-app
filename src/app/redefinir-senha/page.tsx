@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiResetPassword } from '@/lib/api';
+import { getPasswordStrength } from '@/lib/format';
 import { Dumbbell, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { Suspense } from 'react';
 
@@ -68,7 +69,7 @@ function ResetPasswordContent() {
               <p className="text-sm text-gray mb-6">Sua senha foi alterada com sucesso. Faça login com a nova senha.</p>
               <a href="/"
                 className="inline-flex items-center justify-center w-full py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-dark transition-colors">
-                Ir para o Login
+                Voltar ao Login
               </a>
             </div>
           ) : !token ? (
@@ -104,6 +105,19 @@ function ResetPasswordContent() {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
+                  {password && (() => {
+                    const { score, label, color } = getPasswordStrength(password);
+                    return (
+                      <div className="mt-2">
+                        <div className="flex gap-1 mb-1">
+                          {[0, 1, 2, 3].map((i) => (
+                            <div key={i} className="h-1 flex-1 rounded-full transition-colors duration-300" style={{ backgroundColor: i < score ? color : 'var(--color-dark-lighter)' }} />
+                          ))}
+                        </div>
+                        <p className="text-xs font-medium" style={{ color }}>{label}</p>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray mb-1.5">Confirmar nova senha</label>
@@ -127,11 +141,6 @@ function ResetPasswordContent() {
               </form>
             </>
           )}
-          <p className="text-sm text-gray text-center mt-6">
-            <a href="/" className="text-primary font-semibold hover:text-primary-light">
-              Voltar ao login
-            </a>
-          </p>
         </div>
       </div>
     </div>
