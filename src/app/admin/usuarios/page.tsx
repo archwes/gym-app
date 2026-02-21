@@ -190,44 +190,44 @@ export default function AdminUsuariosPage() {
         </div>
       ) : (
         <div className="rounded-2xl bg-dark-light border border-dark-lighter overflow-hidden animate-fade-in">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="w-full">
+            <table className="w-full text-sm table-fixed">
               <thead>
                 <tr className="border-b border-dark-lighter text-left">
-                  <th className="px-4 py-3 text-gray font-semibold">Usuário</th>
-                  <th className="px-4 py-3 text-gray font-semibold hidden sm:table-cell">Email</th>
-                  <th className="px-4 py-3 text-gray font-semibold">Papel</th>
-                  <th className="px-4 py-3 text-gray font-semibold hidden lg:table-cell">Telefone</th>
-                  <th className="px-4 py-3 text-gray font-semibold hidden md:table-cell">Verificado</th>
-                  <th className="px-4 py-3 text-gray font-semibold text-right">Ações</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold">Usuário</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden sm:table-cell">Email</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold">Papel</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden lg:table-cell">Telefone</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold hidden md:table-cell">Verificado</th>
+                  <th className="px-2 sm:px-4 py-3 text-gray font-semibold text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-dark-lighter/50">
                 {users.map((u) => (
                   <tr key={u.id} className="hover:bg-dark-lighter/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center text-sm">
+                    <td className="px-2 sm:px-4 py-3">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center text-sm shrink-0">
                           {u.avatar}
                         </div>
-                        <span className="font-medium text-gray-lighter">{u.name}</span>
+                        <span className="font-medium text-gray-lighter truncate">{u.name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray hidden sm:table-cell">{u.email}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 sm:px-4 py-3 text-gray hidden sm:table-cell truncate">{u.email}</td>
+                    <td className="px-2 sm:px-4 py-3">
                       <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${roleBadge[u.role] || ''}`}>
                         {roleLabels[u.role] || u.role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray text-sm hidden lg:table-cell">{u.phone ? formatPhone(u.phone) : '—'}</td>
-                    <td className="px-4 py-3 hidden md:table-cell">
+                    <td className="px-2 sm:px-4 py-3 text-gray text-sm hidden lg:table-cell">{u.phone ? formatPhone(u.phone) : '—'}</td>
+                    <td className="px-2 sm:px-4 py-3 hidden md:table-cell">
                       {u.email_verified ? (
                         <Check size={16} className="text-secondary" />
                       ) : (
                         <AlertCircle size={16} className="text-danger" />
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-2 sm:px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg text-gray hover:text-primary hover:bg-primary/10 transition-colors" title="Editar">
                           <Pencil size={16} />
