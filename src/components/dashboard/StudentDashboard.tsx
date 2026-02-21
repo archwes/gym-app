@@ -61,6 +61,7 @@ export default function StudentDashboard() {
           value={myPlans.length}
           icon={<Dumbbell size={24} />}
           color="primary"
+          href="/meus-treinos"
         />
         <StatCard
           title="Peso Atual"
@@ -69,18 +70,21 @@ export default function StudentDashboard() {
           trend={weightChange ? `${Number(weightChange) > 0 ? '+' : ''}${weightChange}kg` : undefined}
           trendUp={weightChange ? Number(weightChange) < 0 : undefined}
           color="secondary"
+          href="/progresso"
         />
         <StatCard
           title="Treinos na Semana"
           value={completedThisWeek}
           icon={<Flame size={24} />}
           color="accent"
+          href="/meus-treinos"
         />
         <StatCard
           title="Próximas Sessões"
           value={mySessions.length}
           icon={<Calendar size={24} />}
           color="primary"
+          href="/agenda"
         />
       </div>
 

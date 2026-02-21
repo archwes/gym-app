@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import Link from 'next/link';
 
 interface StatCardProps {
   title: string;
@@ -9,9 +10,10 @@ interface StatCardProps {
   trend?: string;
   trendUp?: boolean;
   color?: string;
+  href?: string;
 }
 
-export default function StatCard({ title, value, icon, trend, trendUp, color = 'primary' }: StatCardProps) {
+export default function StatCard({ title, value, icon, trend, trendUp, color = 'primary', href }: StatCardProps) {
   const colorMap: Record<string, string> = {
     primary: 'from-primary/20 to-primary/5 border-primary/20 text-primary',
     secondary: 'from-secondary/20 to-secondary/5 border-secondary/20 text-secondary',
@@ -26,22 +28,32 @@ export default function StatCard({ title, value, icon, trend, trendUp, color = '
     danger: 'bg-danger/20 text-danger',
   };
 
-  return (
-    <div className={`rounded-2xl bg-gradient-to-br ${colorMap[color]} border p-5 card-hover`}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-gray font-medium">{title}</p>
-          <p className="text-3xl font-bold text-gray-lighter mt-1">{value}</p>
-          {trend && (
-            <p className={`text-xs mt-2 font-medium ${trendUp ? 'text-secondary' : 'text-danger'}`}>
-              {trendUp ? '↑' : '↓'} {trend}
-            </p>
-          )}
-        </div>
-        <div className={`w-12 h-12 rounded-xl ${iconColorMap[color]} flex items-center justify-center`}>
-          {icon}
-        </div>
+  const content = (
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-sm text-gray font-medium">{title}</p>
+        <p className="text-3xl font-bold text-gray-lighter mt-1">{value}</p>
+        {trend && (
+          <p className={`text-xs mt-2 font-medium ${trendUp ? 'text-secondary' : 'text-danger'}`}>
+            {trendUp ? '↑' : '↓'} {trend}
+          </p>
+        )}
+      </div>
+      <div className={`w-12 h-12 rounded-xl ${iconColorMap[color]} flex items-center justify-center`}>
+        {icon}
       </div>
     </div>
   );
+
+  const classes = `block rounded-2xl bg-gradient-to-br ${colorMap[color]} border p-5 card-hover transition-all`;
+
+  if (href) {
+    return (
+      <Link href={href} className={`${classes} hover:scale-[1.03] hover:shadow-lg`}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={classes}>{content}</div>;
 }

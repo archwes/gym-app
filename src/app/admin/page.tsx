@@ -73,14 +73,14 @@ export default function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
-        <StatCard title="Usuários" value={stats.totalUsers} icon={<Users size={24} />} color="primary" />
-        <StatCard title="Personal Trainers" value={stats.totalTrainers} icon={<Users size={24} />} color="secondary" />
-        <StatCard title="Alunos" value={stats.totalStudents} icon={<Users size={24} />} color="accent" />
-        <StatCard title="Exercícios" value={stats.totalExercises} icon={<BookOpen size={24} />} color="primary" />
-        <StatCard title="Treinos" value={stats.totalWorkouts} icon={<Dumbbell size={24} />} color="secondary" />
-        <StatCard title="Sessões" value={stats.totalSessions} icon={<ClipboardList size={24} />} color="accent" />
-        <StatCard title="Verificados" value={stats.verifiedUsers} icon={<CheckCircle size={24} />} color="secondary" />
-        <StatCard title="Não Verificados" value={stats.unverifiedUsers} icon={<XCircle size={24} />} color="danger" />
+        <StatCard title="Usuários" value={stats.totalUsers} icon={<Users size={24} />} color="primary" href="/admin/usuarios" />
+        <StatCard title="Personal Trainers" value={stats.totalTrainers} icon={<Users size={24} />} color="secondary" href="/admin/usuarios" />
+        <StatCard title="Alunos" value={stats.totalStudents} icon={<Users size={24} />} color="accent" href="/admin/usuarios" />
+        <StatCard title="Exercícios" value={stats.totalExercises} icon={<BookOpen size={24} />} color="primary" href="/admin/exercicios" />
+        <StatCard title="Treinos" value={stats.totalWorkouts} icon={<Dumbbell size={24} />} color="secondary" href="/admin/treinos" />
+        <StatCard title="Sessões" value={stats.totalSessions} icon={<ClipboardList size={24} />} color="accent" href="/admin/sessoes" />
+        <StatCard title="Verificados" value={stats.verifiedUsers} icon={<CheckCircle size={24} />} color="secondary" href="/admin/usuarios" />
+        <StatCard title="Não Verificados" value={stats.unverifiedUsers} icon={<XCircle size={24} />} color="danger" href="/admin/usuarios" />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">

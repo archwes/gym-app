@@ -44,18 +44,21 @@ export default function TrainerDashboard() {
           trend="+2 este mês"
           trendUp={true}
           color="primary"
+          href="/alunos"
         />
         <StatCard
           title="Treinos Ativos"
           value={activePlans.length}
           icon={<Dumbbell size={24} />}
           color="secondary"
+          href="/treinos"
         />
         <StatCard
           title="Sessões Hoje"
           value={todaySessions.length}
           icon={<Calendar size={24} />}
           color="accent"
+          href="/agenda"
         />
         <StatCard
           title="Sessões Concluídas"
@@ -64,6 +67,7 @@ export default function TrainerDashboard() {
           trend="Esta semana"
           trendUp={true}
           color="primary"
+          href="/agenda"
         />
       </div>
 
