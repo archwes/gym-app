@@ -1,11 +1,12 @@
 import { NextRequest } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import db from '@/lib/db';
+import db, { initializeDatabase } from '@/lib/db';
 import { json, error } from '@/lib/auth';
 import { sendVerificationEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
+  await initializeDatabase();
   const { name, email, password, role, phone, trainerId, cref } = await request.json();
   if (!name || !email || !password || !role) {
     return error('Nome, email, senha e tipo são obrigatórios');

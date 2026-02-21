@@ -1,9 +1,10 @@
 import { NextRequest } from 'next/server';
 import bcrypt from 'bcryptjs';
-import db from '@/lib/db';
+import db, { initializeDatabase } from '@/lib/db';
 import { getAuthUser, json, error } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
+  await initializeDatabase();
   const user = await getAuthUser(request);
   if (!user) return error('Não autorizado', 401);
 

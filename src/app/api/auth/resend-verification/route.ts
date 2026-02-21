@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
-import db from '@/lib/db';
+import db, { initializeDatabase } from '@/lib/db';
 import { json, error } from '@/lib/auth';
 import { sendVerificationEmail } from '@/lib/email';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: NextRequest) {
+  await initializeDatabase();
   const { email } = await request.json();
   if (!email) return error('Email é obrigatório');
 

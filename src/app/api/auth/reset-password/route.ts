@@ -1,9 +1,10 @@
 import { NextRequest } from 'next/server';
 import bcrypt from 'bcryptjs';
-import db from '@/lib/db';
+import db, { initializeDatabase } from '@/lib/db';
 import { json, error } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
+  await initializeDatabase();
   const { token, password } = await request.json();
   if (!token || !password) return error('Token e nova senha são obrigatórios');
   if (password.length < 6) return error('A senha deve ter pelo menos 6 caracteres');

@@ -9,7 +9,7 @@ import {
   ArrowRight, Loader2, Mail, Lock, User, Phone, Eye, EyeOff,
   CheckCircle2, AlertCircle, Award,
 } from 'lucide-react';
-import { formatPhone } from '@/lib/format';
+import { formatPhone, formatCREF, getPasswordStrength } from '@/lib/format';
 
 type Mode = 'landing' | 'login' | 'register' | 'forgot' | 'verify-pending';
 
@@ -343,6 +343,19 @@ export default function HomePage() {
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
+                    {password && (() => {
+                      const { score, label, color } = getPasswordStrength(password);
+                      return (
+                        <div className="mt-2">
+                          <div className="flex gap-1 mb-1">
+                            {[0, 1, 2, 3].map((i) => (
+                              <div key={i} className="h-1 flex-1 rounded-full transition-colors duration-300" style={{ backgroundColor: i < score ? color : 'var(--color-dark-lighter)' }} />
+                            ))}
+                          </div>
+                          <p className="text-xs font-medium" style={{ color }}>{label}</p>
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Confirmar senha</label>
@@ -376,7 +389,7 @@ export default function HomePage() {
                       <label className="block text-xs font-medium text-gray mb-1.5">CREF (opcional)</label>
                       <div className="relative">
                         <Award size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray" />
-                        <input type="text" value={cref} onChange={(e) => setCref(e.target.value)} placeholder="000000-G/SP"
+                        <input type="text" value={cref} onChange={(e) => setCref(formatCREF(e.target.value))} placeholder="000000-G/SP"
                           className="w-full bg-dark border border-dark-lighter rounded-xl pl-10 pr-3 py-2.5 text-sm text-gray-lighter placeholder:text-gray focus:outline-none focus:border-primary" />
                       </div>
                     </div>

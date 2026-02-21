@@ -1,8 +1,9 @@
 import { NextRequest } from 'next/server';
-import db from '@/lib/db';
+import db, { initializeDatabase } from '@/lib/db';
 import { json, error } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  await initializeDatabase();
   const token = request.nextUrl.searchParams.get('token');
   if (!token) return error('Token não fornecido', 400);
 

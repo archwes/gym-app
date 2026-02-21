@@ -7,7 +7,10 @@ const db = createClient({
 
 export default db;
 
+let _initialized = false;
 export async function initializeDatabase() {
+  if (_initialized) return;
+  _initialized = true;
   await db.executeMultiple(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
