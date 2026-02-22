@@ -41,18 +41,10 @@ input, select, textarea {
   color-scheme: dark;
 }
 
-/* Compact date/time inputs to match other fields */
+/* Ensure date/time inputs respect container width */
 input[type="date"],
 input[type="time"] {
   min-width: 0;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-  padding-top: 0.4rem;
-  padding-bottom: 0.4rem;
-  font-size: 0.8125rem;
-  line-height: 1.25rem;
-  max-height: 2.25rem;
   box-sizing: border-box;
 }
 
@@ -61,8 +53,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   opacity: 0.5;
   cursor: pointer;
   filter: invert(1);
-  width: 14px;
-  height: 14px;
 }
 
 /* Scale auth form inputs on desktop */
