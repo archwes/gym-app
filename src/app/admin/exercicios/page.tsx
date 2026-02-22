@@ -28,7 +28,7 @@ import {
 const muscleGroups: MuscleGroup[] = [
   'Peito', 'Costas', 'Ombros', 'Bíceps', 'Tríceps',
   'Quadríceps', 'Posterior', 'Glúteos', 'Panturrilha',
-  'Abdômen', 'Core', 'Corpo Inteiro',
+  'Abdômen', 'Core', 'Trapézio', 'Antebraço', 'Corpo Inteiro',
 ];
 
 const difficulties = ['Iniciante', 'Intermediário', 'Avançado'] as const;

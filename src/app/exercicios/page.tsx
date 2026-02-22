@@ -10,7 +10,7 @@ import type { MuscleGroup, Exercise } from '@/types';
 const muscleGroups: MuscleGroup[] = [
   'Peito', 'Costas', 'Ombros', 'Bíceps', 'Tríceps',
   'Quadríceps', 'Posterior', 'Glúteos', 'Panturrilha',
-  'Abdômen', 'Core', 'Corpo Inteiro',
+  'Abdômen', 'Core', 'Trapézio', 'Antebraço', 'Corpo Inteiro',
 ];
 
 const difficultyColors: Record<string, string> = {
@@ -31,6 +31,8 @@ const muscleGroupEmojis: Record<MuscleGroup, string> = {
   'Panturrilha': '🦵',
   'Abdômen': '🔥',
   'Core': '⚡',
+  'Trapézio': '🔺',
+  'Antebraço': '✊',
   'Corpo Inteiro': '🏃',
 };
 

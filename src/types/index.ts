@@ -113,6 +113,8 @@ export type MuscleGroup =
   | 'Panturrilha'
   | 'Abdômen'
   | 'Core'
+  | 'Trapézio'
+  | 'Antebraço'
   | 'Corpo Inteiro';
 
 export interface TrainerDashboardData {
