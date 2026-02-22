@@ -76,6 +76,7 @@ export default function AdminTreinosPage() {
         title="Gerenciar Treinos"
         subtitle="Visualize e gerencie todos os planos de treino"
         icon={<Dumbbell size={28} />}
+        backTo={{ href: '/admin', label: 'Voltar para Dashboard' }}
       />
 
       {/* Search */}

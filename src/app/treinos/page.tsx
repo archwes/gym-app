@@ -283,6 +283,7 @@ export default function TreinosPage() {
         title="Treinos"
         subtitle="Gerencie os planos de treino dos seus alunos"
         icon={<Dumbbell size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
         action={
           <Button
             icon={<Plus size={18} />}

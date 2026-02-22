@@ -148,6 +148,7 @@ export default function AdminUsuariosPage() {
         title="Gerenciar Usuários"
         subtitle="Adicione, edite ou remova usuários da plataforma"
         icon={<Users size={28} />}
+        backTo={{ href: '/admin', label: 'Voltar para Dashboard' }}
         action={<Button icon={<Plus size={18} />} onClick={openCreate}>Novo Usuário</Button>}
       />
 

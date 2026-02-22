@@ -98,6 +98,7 @@ export default function PerfilPage() {
         title="Meu Perfil"
         subtitle="Gerencie suas informações pessoais"
         icon={<User size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
       />
 
       <div className="max-w-2xl mx-auto space-y-6">

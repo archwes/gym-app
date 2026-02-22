@@ -120,6 +120,7 @@ export default function AdminExerciciosPage() {
         title="Gerenciar Exercícios"
         subtitle="Adicione, edite ou remova exercícios"
         icon={<BookOpen size={28} />}
+        backTo={{ href: '/admin', label: 'Voltar para Dashboard' }}
         action={<Button icon={<Plus size={18} />} onClick={openCreate}>Novo Exercício</Button>}
       />
 

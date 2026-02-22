@@ -39,6 +39,7 @@ export default function NotificacoesPage() {
         title="Notificações"
         subtitle={`${unreadCount} não lida${unreadCount !== 1 ? 's' : ''}`}
         icon={<Bell size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
         action={
           unreadCount > 0 ? (
             <Button

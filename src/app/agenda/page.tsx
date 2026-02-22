@@ -121,6 +121,7 @@ export default function AgendaPage() {
         title="Agenda"
         subtitle={isTrainer ? 'Gerencie suas sessões e aulas' : 'Suas sessões agendadas'}
         icon={<Calendar size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
         action={
           isTrainer ? (
             <Button icon={<Plus size={18} />} onClick={() => setShowNewSessionModal(true)}>

@@ -192,6 +192,7 @@ export default function MeusTreinosPage() {
         title="Meus Treinos"
         subtitle="Seus planos de treino ativos"
         icon={<Dumbbell size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
       />
 
       {/* Active workout timer bar */}

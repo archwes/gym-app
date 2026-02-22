@@ -159,7 +159,7 @@ export default function TrainerDashboard() {
                     </p>
                   </div>
                   <Link
-                    href="/alunos"
+                    href={`/alunos/${student.id}`}
                     className="text-xs text-primary hover:text-primary-light"
                   >
                     Ver →

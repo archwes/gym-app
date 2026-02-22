@@ -73,6 +73,7 @@ export default function ExerciciosPage() {
         title="Biblioteca de Exercícios"
         subtitle={`${exercises.length} exercícios disponíveis`}
         icon={<BookOpen size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
       />
 
       {/* Search & Filters */}

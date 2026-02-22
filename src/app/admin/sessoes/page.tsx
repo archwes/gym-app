@@ -83,6 +83,7 @@ export default function AdminSessoesPage() {
         title="Gerenciar Sessões"
         subtitle="Visualize e gerencie todas as sessões agendadas"
         icon={<ClipboardList size={28} />}
+        backTo={{ href: '/admin', label: 'Voltar para Dashboard' }}
       />
 
       {/* Filters */}

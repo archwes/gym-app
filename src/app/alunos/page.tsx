@@ -135,6 +135,7 @@ export default function AlunosPage() {
         title="Alunos"
         subtitle={`${students.length} aluno${students.length !== 1 ? 's' : ''} cadastrado${students.length !== 1 ? 's' : ''}`}
         icon={<Users size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
         action={
           <Button icon={<Plus size={18} />} onClick={openModal}>
             Adicionar Aluno

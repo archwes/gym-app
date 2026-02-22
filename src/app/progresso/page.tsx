@@ -43,6 +43,7 @@ export default function ProgressoPage() {
         title="Meu Progresso"
         subtitle="Acompanhe sua evolução ao longo do tempo"
         icon={<TrendingUp size={24} />}
+        backTo={{ href: '/dashboard', label: 'Voltar para Dashboard' }}
       />
 
       {myProgress.length === 0 ? (
