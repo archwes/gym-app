@@ -5,14 +5,28 @@ import { json } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     await initializeDatabase();
 
+    const url = new URL(request.url);
+    const force = url.searchParams.get('force') === 'true';
+
     // Check if already seeded
     const userCount = await db.execute('SELECT COUNT(*) as count FROM users');
-    if (Number(userCount.rows[0].count) > 0) {
+    if (Number(userCount.rows[0].count) > 0 && !force) {
       return json({ message: 'Database already seeded', skipped: true });
+    }
+
+    if (force) {
+      // Clear all data in correct order (respecting foreign keys)
+      await db.execute('DELETE FROM notifications');
+      await db.execute('DELETE FROM student_progress');
+      await db.execute('DELETE FROM schedule_sessions');
+      await db.execute('DELETE FROM workout_exercises');
+      await db.execute('DELETE FROM workout_plans');
+      await db.execute('DELETE FROM exercises');
+      await db.execute('DELETE FROM users');
     }
 
     const hashPassword = (pw: string) => bcrypt.hashSync(pw, 10);
