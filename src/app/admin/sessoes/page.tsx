@@ -32,11 +32,12 @@ interface AdminSession {
   notes?: string;
 }
 
-const statusLabels: Record<string, string> = { scheduled: 'Agendada', completed: 'Concluída', cancelled: 'Cancelada' };
+const statusLabels: Record<string, string> = { scheduled: 'Agendada', completed: 'Concluída', cancelled: 'Cancelada', rescheduled: 'Re-agendada' };
 const statusBadge: Record<string, string> = {
   scheduled: 'bg-primary/20 text-primary',
   completed: 'bg-secondary/20 text-secondary',
   cancelled: 'bg-danger/20 text-danger',
+  rescheduled: 'bg-warning/20 text-warning',
 };
 
 export default function AdminSessoesPage() {
@@ -99,6 +100,7 @@ export default function AdminSessoesPage() {
             <option value="scheduled">Agendada</option>
             <option value="completed">Concluída</option>
             <option value="cancelled">Cancelada</option>
+            <option value="rescheduled">Re-agendada</option>
           </select>
         </div>
       </div>

@@ -71,7 +71,7 @@ export async function initializeDatabase() {
       time TEXT NOT NULL,
       duration INTEGER NOT NULL DEFAULT 60,
       type TEXT NOT NULL CHECK(type IN ('Treino', 'Avaliação', 'Consulta')),
-      status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled', 'completed', 'cancelled')),
+      status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled', 'completed', 'cancelled', 'rescheduled')),
       notes TEXT,
       created_at TEXT DEFAULT (datetime('now'))
     );
@@ -149,6 +149,32 @@ export async function initializeDatabase() {
       await db.execute("INSERT INTO users_new SELECT id, name, email, password, role, avatar, phone, cref, email_verified, verification_token, reset_token, reset_token_expires, created_at, trainer_id FROM users");
       await db.execute("DROP TABLE users");
       await db.execute("ALTER TABLE users_new RENAME TO users");
+      await db.execute("PRAGMA foreign_keys = ON");
+    }
+  } catch { /* migration already done or not needed */ }
+
+  // Migrate schedule_sessions to allow 'rescheduled' status
+  try {
+    const sessInfo = await db.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='schedule_sessions'");
+    const sessSql = sessInfo.rows[0]?.sql as string || '';
+    if (sessSql.includes("'scheduled', 'completed', 'cancelled')") && !sessSql.includes("'rescheduled'")) {
+      await db.execute("PRAGMA foreign_keys = OFF");
+      await db.execute("DROP TABLE IF EXISTS schedule_sessions_new");
+      await db.execute(`CREATE TABLE schedule_sessions_new (
+        id TEXT PRIMARY KEY,
+        trainer_id TEXT NOT NULL REFERENCES users(id),
+        student_id TEXT NOT NULL REFERENCES users(id),
+        date TEXT NOT NULL,
+        time TEXT NOT NULL,
+        duration INTEGER NOT NULL DEFAULT 60,
+        type TEXT NOT NULL CHECK(type IN ('Treino', 'Avaliação', 'Consulta')),
+        status TEXT NOT NULL DEFAULT 'scheduled' CHECK(status IN ('scheduled', 'completed', 'cancelled', 'rescheduled')),
+        notes TEXT,
+        created_at TEXT DEFAULT (datetime('now'))
+      )`);
+      await db.execute("INSERT INTO schedule_sessions_new SELECT * FROM schedule_sessions");
+      await db.execute("DROP TABLE schedule_sessions");
+      await db.execute("ALTER TABLE schedule_sessions_new RENAME TO schedule_sessions");
       await db.execute("PRAGMA foreign_keys = ON");
     }
   } catch { /* migration already done or not needed */ }

@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import PageHeader from '@/components/ui/PageHeader';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
+import Link from 'next/link';
 import {
   Calendar,
   ChevronLeft,
@@ -15,12 +16,14 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; icon: typeof AlertCircle; color: string }> = {
   scheduled: { label: 'Agendado', icon: AlertCircle, color: 'bg-accent/10 text-accent' },
   completed: { label: 'Concluído', icon: CheckCircle2, color: 'bg-secondary/10 text-secondary' },
   cancelled: { label: 'Cancelado', icon: XCircle, color: 'bg-danger/10 text-danger' },
+  rescheduled: { label: 'Re-agendado', icon: RefreshCw, color: 'bg-warning/10 text-warning' },
 };
 
 function getDaysInMonth(year: number, month: number) {
@@ -37,7 +40,7 @@ const monthNames = [
 ];
 
 export default function AgendaPage() {
-  const { currentUser, users, sessions, addSession, cancelSession, fetchUsers, fetchSessions } = useAppStore();
+  const { currentUser, users, sessions, addSession, fetchUsers, fetchSessions } = useAppStore();
   const router = useRouter();
 
   const now = new Date();
@@ -193,6 +196,8 @@ export default function AgendaPage() {
                               ? 'bg-secondary'
                               : s.status === 'cancelled'
                               ? 'bg-danger'
+                              : s.status === 'rescheduled'
+                              ? 'bg-warning'
                               : 'bg-accent'
                           }`}
                         />
@@ -229,9 +234,10 @@ export default function AgendaPage() {
                 .map((session) => {
                   const StatusIcon = statusConfig[session.status].icon;
                   return (
-                    <div
+                    <Link
+                      href={`/agenda/${session.id}`}
                       key={session.id}
-                      className="p-3 rounded-xl bg-dark/50 border border-dark-lighter/50"
+                      className="block p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/30 transition-colors"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
@@ -249,16 +255,8 @@ export default function AgendaPage() {
                       </p>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-xs text-gray">{session.type}</span>
-                        {session.status === 'scheduled' && (
-                          <button
-                            onClick={() => cancelSession(session.id)}
-                            className="text-xs text-danger hover:text-red-400 font-medium"
-                          >
-                            Cancelar
-                          </button>
-                        )}
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
             </div>

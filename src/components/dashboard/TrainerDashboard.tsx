@@ -86,7 +86,8 @@ export default function TrainerDashboard() {
             <div className="relative">
               <div className="space-y-3">
                 {todaySessions.slice(0, 4).map((session, idx) => (
-                  <div
+                  <Link
+                    href={`/agenda/${session.id}`}
                     key={session.id}
                     className={`flex items-center gap-4 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/20 transition-colors ${idx === 3 ? 'opacity-40' : ''}`}
                   >
@@ -112,7 +113,7 @@ export default function TrainerDashboard() {
                   >
                     {session.type}
                   </span>
-                </div>
+                </Link>
               ))}
               </div>
               {todaySessions.length > 3 && (

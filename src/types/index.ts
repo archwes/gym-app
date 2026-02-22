@@ -70,7 +70,7 @@ export interface ScheduleSession {
   time: string;
   duration: number;
   type: 'Treino' | 'Avaliação' | 'Consulta';
-  status: 'scheduled' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled';
   notes?: string;
   created_at?: string;
 }

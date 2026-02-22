@@ -205,9 +205,10 @@ export default function StudentDashboard() {
           <div className="relative">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {mySessions.slice(0, 4).map((session, idx) => (
-                <div
+                <Link
+                  href={`/agenda/${session.id}`}
                   key={session.id}
-                  className={`flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 ${idx === 3 ? 'opacity-40' : ''}`}
+                  className={`flex items-center gap-3 p-3 rounded-xl bg-dark/50 border border-dark-lighter/50 hover:border-primary/30 transition-colors ${idx === 3 ? 'opacity-40' : ''}`}
                 >
                   <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                     <Clock size={18} className="text-accent" />
@@ -216,7 +217,7 @@ export default function StudentDashboard() {
                     <p className="text-sm font-semibold text-gray-lighter">{formatDateBR(session.date)}</p>
                     <p className="text-xs text-gray">{session.time} · {session.type}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
             {mySessions.length > 3 && (

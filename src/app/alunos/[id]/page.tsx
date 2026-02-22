@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { apiGetStudentProfile, apiCreateProgress, apiDeleteProgress } from '@/lib/api';
 import { formatDateBR } from '@/lib/format';
@@ -156,6 +157,7 @@ export default function StudentProfilePage() {
     scheduled: { label: 'Agendada', color: 'text-accent bg-accent/10' },
     completed: { label: 'Concluída', color: 'text-success bg-success/10' },
     cancelled: { label: 'Cancelada', color: 'text-danger bg-danger/10' },
+    rescheduled: { label: 'Re-agendada', color: 'text-warning bg-warning/10' },
   };
 
   const dayNames: Record<string, string> = {
@@ -591,7 +593,7 @@ function SessionCard({
 }) {
   const status = statusLabels[session.status] || statusLabels.scheduled;
   return (
-    <div className="rounded-2xl bg-dark-light border border-dark-lighter p-4">
+    <Link href={`/agenda/${session.id}`} className="block rounded-2xl bg-dark-light border border-dark-lighter p-4 hover:border-primary/30 transition-colors">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-bold text-gray-lighter">{formatDateBR(session.date)}</span>
         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${status.color}`}>
@@ -605,7 +607,7 @@ function SessionCard({
       {session.notes && (
         <p className="text-xs text-gray mt-2 italic">{session.notes}</p>
       )}
-    </div>
+    </Link>
   );
 }
 

@@ -282,6 +282,10 @@ export async function apiUpdateSession(id: string, data: Partial<ScheduleSession
   });
 }
 
+export async function apiGetSession(id: string): Promise<ScheduleSession> {
+  return request<ScheduleSession>(`/api/sessions/${id}`);
+}
+
 export async function apiDeleteSession(id: string): Promise<void> {
   await request(`/api/sessions/${id}`, { method: 'DELETE' });
 }
