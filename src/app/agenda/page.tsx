@@ -289,7 +289,7 @@ export default function AgendaPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-medium text-gray mb-1.5">Data</label>
               <input
                 type="date"
@@ -298,7 +298,7 @@ export default function AgendaPage() {
                 className="w-full bg-dark border border-dark-lighter rounded-lg px-2.5 py-1.5 text-[13px] text-gray-lighter focus:outline-none focus:border-primary"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-medium text-gray mb-1.5">Horário</label>
               <input
                 type="time"

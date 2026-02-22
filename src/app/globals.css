@@ -45,6 +45,7 @@ input, select, textarea {
 input[type="date"],
 input[type="time"] {
   min-width: 0;
+  overflow: hidden;
   position: relative;
   z-index: 1;
   padding-top: 0.4rem;
@@ -52,6 +53,7 @@ input[type="time"] {
   font-size: 0.8125rem;
   line-height: 1.25rem;
   max-height: 2.25rem;
+  box-sizing: border-box;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator,
