@@ -134,17 +134,12 @@ export default function AlunosPage() {
         title="Alunos"
         subtitle={`${students.length} aluno${students.length !== 1 ? 's' : ''} cadastrado${students.length !== 1 ? 's' : ''}`}
         icon={<Users size={24} />}
+        action={
+          <Button icon={<Plus size={18} />} onClick={openModal}>
+            Adicionar Aluno
+          </Button>
+        }
       />
-
-      {/* Add student button */}
-      <div className="mb-6">
-        <button
-          onClick={openModal}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold text-sm hover:shadow-lg hover:shadow-primary/25 transition-all"
-        >
-          <Plus size={18} /> Adicionar Aluno
-        </button>
-      </div>
 
       {/* Students grid */}
       {students.length === 0 ? (
