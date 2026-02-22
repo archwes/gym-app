@@ -299,6 +299,16 @@ export async function apiCreateProgress(data: Partial<StudentProgress>): Promise
   });
 }
 
+export async function apiDeleteProgress(id: string): Promise<void> {
+  await request(`/api/progress/${id}`, { method: 'DELETE' });
+}
+
+// --- Student Profile (for trainers) ---
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function apiGetStudentProfile(studentId: string): Promise<any> {
+  return request(`/api/students/${studentId}`);
+}
+
 // --- Notifications ---
 export async function apiGetNotifications(): Promise<Notification[]> {
   return request<Notification[]>('/api/notifications');

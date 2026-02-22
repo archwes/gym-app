@@ -7,8 +7,9 @@ import { apiSearchStudents } from '@/lib/api';
 import { User } from '@/types';
 import PageHeader from '@/components/ui/PageHeader';
 import {
-  Users, Mail, Phone, Calendar, Dumbbell, Plus, Search,
+  Users, Mail, Phone, Plus, Search,
   X, UserPlus, Check, Copy, Loader2, AlertCircle,
+  User as UserIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import Modal from '@/components/ui/Modal';
@@ -160,9 +161,10 @@ export default function AlunosPage() {
             const latestProgress = studentProgress[studentProgress.length - 1];
 
             return (
-              <div
+              <Link
                 key={student.id}
-                className="rounded-2xl bg-dark-light border border-dark-lighter p-5 card-hover animate-fade-in"
+                href={`/alunos/${student.id}`}
+                className="block rounded-2xl bg-dark-light border border-dark-lighter p-5 card-hover animate-fade-in hover:border-primary/30 transition-all"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Avatar & Name */}
@@ -210,22 +212,15 @@ export default function AlunosPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <Link
-                    href="/treinos"
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors"
+                {/* Action */}
+                <div className="flex">
+                  <span
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary text-xs font-semibold"
                   >
-                    <Dumbbell size={14} /> Treinos
-                  </Link>
-                  <Link
-                    href="/agenda"
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/10 text-secondary text-xs font-semibold hover:bg-secondary/20 transition-colors"
-                  >
-                    <Calendar size={14} /> Agenda
-                  </Link>
+                    <UserIcon size={14} /> Ver Perfil →
+                  </span>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
