@@ -29,15 +29,15 @@ export async function POST(request: NextRequest) {
   const user = await getAuthUser(request);
   if (!user) return error('Não autorizado', 401);
 
-  const { student_id, date, weight, body_fat, chest, waist, hips, arms, thighs, notes } = await request.json();
+  const { student_id, session_id, date, weight, body_fat, chest, waist, hips, arms, thighs, notes } = await request.json();
   const targetId = user.role === 'trainer' ? student_id : user.id;
 
   if (!targetId || !date) return error('Aluno e data obrigatórios');
 
   const id = uuidv4();
   await db.execute({
-    sql: 'INSERT INTO student_progress (id, student_id, date, weight, body_fat, chest, waist, hips, arms, thighs, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    args: [id, targetId, date, weight || null, body_fat || null, chest || null, waist || null, hips || null, arms || null, thighs || null, notes || null],
+    sql: 'INSERT INTO student_progress (id, student_id, session_id, date, weight, body_fat, chest, waist, hips, arms, thighs, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    args: [id, targetId, session_id || null, date, weight || null, body_fat || null, chest || null, waist || null, hips || null, arms || null, thighs || null, notes || null],
   });
 
   const entry = await db.execute({ sql: 'SELECT * FROM student_progress WHERE id = ?', args: [id] });

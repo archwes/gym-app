@@ -78,6 +78,7 @@ export interface ScheduleSession {
 export interface StudentProgress {
   id: string;
   student_id: string;
+  session_id?: string;
   date: string;
   weight: number;
   body_fat?: number;

@@ -10,7 +10,7 @@ import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import type { WorkoutPlan, ScheduleSession, StudentProgress, Notification } from '@/types';
 import {
-  ArrowLeft, Mail, Phone, Calendar, Dumbbell, Clock,
+  ArrowLeft, Mail, Phone, Calendar, Dumbbell,
   TrendingUp, MessageSquare, Plus, Trash2, ChevronDown,
   ChevronUp, User as UserIcon, Weight, Ruler, Activity,
   Loader2, Star, Zap, Target,
@@ -54,6 +54,7 @@ export default function StudentProfilePage() {
     arms: '',
     thighs: '',
     notes: '',
+    session_id: '',
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -81,12 +82,19 @@ export default function StudentProfilePage() {
     fetchData();
   }, [currentUser, router, fetchData]);
 
+  // Completed "Avaliação" sessions not yet linked to a progress record
+  const linkedSessionIds = new Set(progress.filter(p => p.session_id).map(p => p.session_id));
+  const availableEvaluations = sessions.filter(
+    s => s.type === 'Avaliação' && s.status === 'completed' && !linkedSessionIds.has(s.id)
+  );
+
   const handleAddProgress = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
       await apiCreateProgress({
         student_id: studentId,
+        session_id: progressForm.session_id || undefined,
         date: progressForm.date,
         weight: progressForm.weight ? Number(progressForm.weight) : undefined,
         body_fat: progressForm.body_fat ? Number(progressForm.body_fat) : undefined,
@@ -101,7 +109,7 @@ export default function StudentProfilePage() {
       setProgressForm({
         date: new Date().toISOString().split('T')[0],
         weight: '', body_fat: '', chest: '', waist: '',
-        hips: '', arms: '', thighs: '', notes: '',
+        hips: '', arms: '', thighs: '', notes: '', session_id: '',
       });
       fetchData();
     } catch {
@@ -344,41 +352,9 @@ export default function StudentProfilePage() {
               <EmptyState icon={<TrendingUp size={40} />} text="Nenhum registro de progresso. Clique em 'Registrar Progresso' para começar." />
             ) : (
               <>
-                {/* Progress chart (weight over time) */}
+                {/* Progress chart (weight over time) - Cartesian */}
                 {progress.length > 1 && (
-                  <div className="rounded-2xl bg-dark-light border border-dark-lighter p-4 sm:p-5">
-                    <h3 className="text-sm font-semibold text-gray-lighter mb-4 flex items-center gap-2">
-                      <Activity size={16} className="text-primary" /> Evolução do Peso
-                    </h3>
-                    <div className="h-32 flex items-end gap-1">
-                      {[...progress].reverse().slice(-12).map((p, idx) => {
-                        const weights = [...progress].reverse().slice(-12).map(pr => pr.weight);
-                        const max = Math.max(...weights);
-                        const min = Math.min(...weights);
-                        const range = max - min || 1;
-                        const height = ((p.weight - min) / range) * 100;
-                        return (
-                          <div
-                            key={idx}
-                            className="flex-1 bg-gradient-to-t from-primary to-primary-light rounded-t-sm transition-all hover:opacity-80 relative group"
-                            style={{ height: `${Math.max(height, 10)}%` }}
-                          >
-                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-gray opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                              {p.weight}kg
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="flex justify-between mt-2">
-                      <span className="text-[10px] text-gray">
-                        {formatDateBR([...progress].reverse().slice(-12)[0]?.date)}
-                      </span>
-                      <span className="text-[10px] text-gray">
-                        {formatDateBR(progress[0]?.date)}
-                      </span>
-                    </div>
-                  </div>
+                  <WeightChart data={[...progress].reverse().slice(-12)} />
                 )}
 
                 {/* Progress entries */}
@@ -415,6 +391,34 @@ export default function StudentProfilePage() {
               className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
             />
           </div>
+
+          {availableEvaluations.length > 0 && (
+            <div>
+              <label className="block text-xs font-medium text-gray mb-1.5 flex items-center gap-1">
+                <Calendar size={12} /> Vincular à Avaliação
+              </label>
+              <select
+                value={progressForm.session_id}
+                onChange={e => {
+                  const sid = e.target.value;
+                  const sel = availableEvaluations.find(s => s.id === sid);
+                  setProgressForm({
+                    ...progressForm,
+                    session_id: sid,
+                    date: sel ? sel.date : progressForm.date,
+                  });
+                }}
+                className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+              >
+                <option value="">Sem vínculo</option>
+                {availableEvaluations.map(s => (
+                  <option key={s.id} value={s.id}>
+                    Avaliação — {formatDateBR(s.date)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -595,7 +599,6 @@ function SessionCard({
         </span>
       </div>
       <div className="flex items-center gap-3 text-xs text-gray">
-        <span className="flex items-center gap-1"><Clock size={12} /> {session.time}</span>
         <span className="flex items-center gap-1"><Zap size={12} /> {session.type}</span>
         <span>{session.duration}min</span>
       </div>
@@ -642,10 +645,15 @@ function ProgressCard({ entry, onDelete }: { entry: StudentProgress; onDelete: (
   return (
     <div className="rounded-2xl bg-dark-light border border-dark-lighter p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-bold text-gray-lighter flex items-center gap-2">
-          <TrendingUp size={14} className="text-secondary" />
-          {formatDateBR(entry.date)}
-        </p>
+        <div>
+          <p className="text-sm font-bold text-gray-lighter flex items-center gap-2">
+            <TrendingUp size={14} className="text-secondary" />
+            {formatDateBR(entry.date)}
+          </p>
+          {entry.session_id && (
+            <span className="text-[10px] text-primary mt-0.5 inline-block">Vinculado à Avaliação</span>
+          )}
+        </div>
         <button
           onClick={onDelete}
           className="p-1.5 rounded-lg text-gray hover:text-danger hover:bg-danger/10 transition-colors"
@@ -667,6 +675,98 @@ function ProgressCard({ entry, onDelete }: { entry: StudentProgress; onDelete: (
       {entry.notes && (
         <p className="text-xs text-gray mt-3 p-2 rounded-lg bg-dark/30 italic">{entry.notes}</p>
       )}
+    </div>
+  );
+}
+
+function WeightChart({ data }: { data: StudentProgress[] }) {
+  const filtered = data.filter(p => p.weight != null);
+  if (filtered.length < 2) return null;
+
+  const weights = filtered.map(p => p.weight);
+  const minW = Math.min(...weights);
+  const maxW = Math.max(...weights);
+  const pad = (maxW - minW) * 0.15 || 2;
+  const yMin = Math.floor(minW - pad);
+  const yMax = Math.ceil(maxW + pad);
+  const yRange = yMax - yMin || 1;
+
+  // SVG dimensions
+  const W = 500, H = 180;
+  const ml = 42, mr = 16, mt = 16, mb = 32;
+  const cw = W - ml - mr;
+  const ch = H - mt - mb;
+
+  const pts = filtered.map((p, i) => ({
+    x: ml + (filtered.length === 1 ? cw / 2 : (i / (filtered.length - 1)) * cw),
+    y: mt + ch - ((p.weight - yMin) / yRange) * ch,
+    w: p.weight,
+    d: p.date,
+  }));
+
+  const line = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  const area = `${line} L${pts[pts.length - 1].x},${mt + ch} L${pts[0].x},${mt + ch} Z`;
+
+  // Y-axis ticks (4-5 values)
+  const yTicks: number[] = [];
+  const step = Math.ceil(yRange / 4) || 1;
+  for (let v = yMin; v <= yMax; v += step) yTicks.push(v);
+  if (yTicks[yTicks.length - 1] < yMax) yTicks.push(yMax);
+
+  return (
+    <div className="rounded-2xl bg-dark-light border border-dark-lighter p-4 sm:p-5">
+      <h3 className="text-sm font-semibold text-gray-lighter mb-4 flex items-center gap-2">
+        <Activity size={16} className="text-primary" /> Evolução do Peso
+      </h3>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+        {/* Grid lines */}
+        {yTicks.map(v => {
+          const y = mt + ch - ((v - yMin) / yRange) * ch;
+          return (
+            <g key={v}>
+              <line x1={ml} y1={y} x2={W - mr} y2={y} stroke="rgba(148,163,184,0.1)" strokeWidth={0.5} />
+              <text x={ml - 6} y={y + 3} textAnchor="end" fill="rgba(148,163,184,0.5)" fontSize={9}>{v}kg</text>
+            </g>
+          );
+        })}
+
+        {/* Area fill */}
+        <path d={area} fill="url(#wGrad)" />
+        <defs>
+          <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(99,102,241,0.3)" />
+            <stop offset="100%" stopColor="rgba(99,102,241,0)" />
+          </linearGradient>
+        </defs>
+
+        {/* Line */}
+        <path d={line} fill="none" stroke="#6366f1" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+
+        {/* Data points + labels */}
+        {pts.map((p, i) => (
+          <g key={i}>
+            <circle cx={p.x} cy={p.y} r={3.5} fill="#6366f1" stroke="#0f172a" strokeWidth={1.5} />
+            <text x={p.x} y={p.y - 8} textAnchor="middle" fill="rgba(148,163,184,0.8)" fontSize={8} fontWeight={600}>{p.w}kg</text>
+          </g>
+        ))}
+
+        {/* X-axis labels (dates) */}
+        {pts.map((p, i) => {
+          // Show first, last, and some middle ticks
+          if (pts.length <= 6 || i === 0 || i === pts.length - 1 || i % Math.ceil(pts.length / 5) === 0) {
+            return (
+              <text key={`x${i}`} x={p.x} y={H - 6} textAnchor="middle" fill="rgba(148,163,184,0.5)" fontSize={8}>
+                {formatDateBR(p.d).replace(/\/\d{4}$/, '')}
+              </text>
+            );
+          }
+          return null;
+        })}
+
+        {/* Axes */}
+        <line x1={ml} y1={mt} x2={ml} y2={mt + ch} stroke="rgba(148,163,184,0.2)" strokeWidth={1} />
+        <line x1={ml} y1={mt + ch} x2={W - mr} y2={mt + ch} stroke="rgba(148,163,184,0.2)" strokeWidth={1} />
+      </svg>
     </div>
   );
 }

@@ -79,6 +79,7 @@ export async function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS student_progress (
       id TEXT PRIMARY KEY,
       student_id TEXT NOT NULL REFERENCES users(id),
+      session_id TEXT REFERENCES schedule_sessions(id),
       date TEXT NOT NULL,
       weight REAL,
       body_fat REAL,
@@ -117,6 +118,7 @@ export async function initializeDatabase() {
     "ALTER TABLE users ADD COLUMN verification_token TEXT",
     "ALTER TABLE users ADD COLUMN reset_token TEXT",
     "ALTER TABLE users ADD COLUMN reset_token_expires TEXT",
+    "ALTER TABLE student_progress ADD COLUMN session_id TEXT REFERENCES schedule_sessions(id)",
   ];
 
   // Migrate users table to allow admin role
