@@ -45,7 +45,9 @@ input, select, textarea {
 input[type="date"],
 input[type="time"] {
   min-width: 0;
+  max-width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator,

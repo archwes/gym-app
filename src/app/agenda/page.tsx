@@ -294,7 +294,7 @@ export default function AgendaPage() {
               type="date"
               value={newSessionDate}
               onChange={(e) => setNewSessionDate(e.target.value)}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+              className="w-full max-w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -304,7 +304,7 @@ export default function AgendaPage() {
               type="time"
               value={newSessionTime}
               onChange={(e) => setNewSessionTime(e.target.value)}
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+              className="w-full max-w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
             />
           </div>
 
