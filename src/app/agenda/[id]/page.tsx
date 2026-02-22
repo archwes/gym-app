@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
-import { apiGetSession, apiUpdateSession } from '@/lib/api';
+import { apiGetSession, apiUpdateSession, apiDeleteSession } from '@/lib/api';
 import { formatDateBR } from '@/lib/format';
 import PageHeader from '@/components/ui/PageHeader';
 import Button from '@/components/ui/Button';
@@ -21,6 +21,7 @@ import {
   RefreshCw,
   Loader2,
   Save,
+  Trash2,
 } from 'lucide-react';
 
 const statusConfig: Record<string, { label: string; icon: typeof AlertCircle; color: string; bg: string }> = {
@@ -31,7 +32,7 @@ const statusConfig: Record<string, { label: string; icon: typeof AlertCircle; co
 };
 
 export default function SessionDetailPage() {
-  const { currentUser } = useAppStore();
+  const { currentUser, fetchSessions } = useAppStore();
   const router = useRouter();
   const params = useParams();
   const sessionId = params.id as string;
@@ -42,7 +43,12 @@ export default function SessionDetailPage() {
   const [saving, setSaving] = useState(false);
   const [editNotes, setEditNotes] = useState('');
   const [editStatus, setEditStatus] = useState('');
+  const [editDate, setEditDate] = useState('');
+  const [editTime, setEditTime] = useState('');
+  const [editType, setEditType] = useState<'Treino' | 'Avaliação' | 'Consulta'>('Treino');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchSession = useCallback(async () => {
     try {
@@ -51,6 +57,9 @@ export default function SessionDetailPage() {
       setSession(data);
       setEditNotes(data.notes || '');
       setEditStatus(data.status);
+      setEditDate(data.date);
+      setEditTime(data.time);
+      setEditType((data.type as 'Treino' | 'Avaliação' | 'Consulta') || 'Treino');
     } catch {
       router.push('/agenda');
     } finally {
@@ -73,15 +82,32 @@ export default function SessionDetailPage() {
       const updated = await apiUpdateSession(session.id, {
         status: editStatus as ScheduleSession['status'],
         notes: editNotes || undefined,
+        date: editDate,
+        time: editTime,
+        type: editType,
       });
       setSession({ ...session, ...updated });
       setEditing(false);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2000);
+      fetchSessions();
     } catch {
       /* ignore */
     }
     setSaving(false);
+  };
+
+  const handleDelete = async () => {
+    if (!session) return;
+    setDeleting(true);
+    try {
+      await apiDeleteSession(session.id);
+      fetchSessions();
+      router.push('/agenda');
+    } catch {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   if (!currentUser) return null;
@@ -219,6 +245,48 @@ export default function SessionDetailPage() {
 
             {editing ? (
               <div className="space-y-4">
+                {/* Date and Time */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray mb-1.5">Data</label>
+                    <input
+                      type="date"
+                      value={editDate}
+                      onChange={(e) => setEditDate(e.target.value)}
+                      className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray mb-1.5">Horário</label>
+                    <input
+                      type="time"
+                      value={editTime}
+                      onChange={(e) => setEditTime(e.target.value)}
+                      className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+
+                {/* Type selector */}
+                <div>
+                  <label className="block text-xs font-medium text-gray mb-1.5">Tipo de Sessão</label>
+                  <div className="flex gap-2">
+                    {(['Treino', 'Avaliação', 'Consulta'] as const).map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => setEditType(type)}
+                        className={`flex-1 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                          editType === type
+                            ? 'bg-primary text-white'
+                            : 'bg-dark border border-dark-lighter text-gray hover:text-gray-lighter'
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Status selector */}
                 <div>
                   <label className="block text-xs font-medium text-gray mb-2">Alterar Status</label>
@@ -251,6 +319,9 @@ export default function SessionDetailPage() {
                     setEditing(false);
                     setEditNotes(session.notes || '');
                     setEditStatus(session.status);
+                    setEditDate(session.date);
+                    setEditTime(session.time);
+                    setEditType((session.type as 'Treino' | 'Avaliação' | 'Consulta') || 'Treino');
                   }}>
                     Cancelar
                   </Button>
@@ -261,10 +332,14 @@ export default function SessionDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <Button onClick={() => setEditing(true)}>
                   <FileText size={16} />
                   Editar Sessão
+                </Button>
+                <Button variant="outline" className="!border-danger/30 !text-danger hover:!bg-danger/10" onClick={() => setShowDeleteConfirm(true)}>
+                  <Trash2 size={16} />
+                  Excluir
                 </Button>
                 {saveSuccess && (
                   <span className="text-xs text-secondary flex items-center gap-1 animate-fade-in">
@@ -273,6 +348,37 @@ export default function SessionDetailPage() {
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Delete confirmation modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-dark-light border border-dark-lighter rounded-2xl p-6 max-w-sm w-full animate-fade-in space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-danger/10 flex items-center justify-center shrink-0">
+                  <Trash2 size={18} className="text-danger" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-lighter">Excluir sessão?</p>
+                  <p className="text-xs text-gray">Esta ação não pode ser desfeita.</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray">
+                A sessão de <strong className="text-gray-lighter">{session.type}</strong> em{' '}
+                <strong className="text-gray-lighter">{formatDateBR(session.date)}</strong> às{' '}
+                <strong className="text-gray-lighter">{session.time}</strong> será permanentemente removida.
+              </p>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleting}>
+                  Cancelar
+                </Button>
+                <Button className="!bg-danger hover:!bg-danger/80" onClick={handleDelete} disabled={deleting}>
+                  {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  Confirmar Exclusão
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>

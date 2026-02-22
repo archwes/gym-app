@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
   // Notify student
   await db.execute({
     sql: 'INSERT INTO notifications (id, user_id, title, message, type, is_read) VALUES (?, ?, ?, ?, ?, 0)',
-    args: [uuidv4(), student_id, 'Sessão agendada', `Nova sessão de ${type || 'Treino'} em ${date} às ${time}.`, 'info'],
+    args: [uuidv4(), student_id, 'Sessão agendada', `Nova sessão de ${type || 'Treino'} em ${date.split('-').reverse().join('/')} às ${time}.`, 'info'],
   });
 
   const session = await db.execute({

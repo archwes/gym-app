@@ -56,6 +56,7 @@ interface AppState {
     time: string;
     duration?: number;
     type?: string;
+    notes?: string;
   }) => Promise<void>;
   cancelSession: (id: string) => Promise<void>;
 

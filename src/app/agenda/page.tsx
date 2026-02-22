@@ -53,6 +53,7 @@ export default function AgendaPage() {
   const [newSessionDate, setNewSessionDate] = useState('');
   const [newSessionTime, setNewSessionTime] = useState('');
   const [newSessionType, setNewSessionType] = useState<'Treino' | 'Avaliação' | 'Consulta'>('Treino');
+  const [newSessionNotes, setNewSessionNotes] = useState('');
 
   useEffect(() => {
     if (!currentUser) {
@@ -111,11 +112,13 @@ export default function AgendaPage() {
       time: newSessionTime,
       duration: 60,
       type: newSessionType,
+      notes: newSessionNotes || undefined,
     });
     setShowNewSessionModal(false);
     setNewSessionStudent('');
     setNewSessionDate('');
     setNewSessionTime('');
+    setNewSessionNotes('');
   };
 
   return (
@@ -323,6 +326,17 @@ export default function AgendaPage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray mb-1.5">Observações (opcional)</label>
+            <textarea
+              value={newSessionNotes}
+              onChange={(e) => setNewSessionNotes(e.target.value)}
+              placeholder="Notas ou observações sobre a sessão..."
+              rows={3}
+              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary resize-none placeholder:text-gray/50"
+            />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
