@@ -66,8 +66,8 @@ export async function POST(request: Request) {
       { name: 'Crucifixo com Halteres', muscleGroup: 'Peito', equipment: 'Halteres e Banco', description: 'Deitado no banco, abra os braços com os halteres em arco amplo.', difficulty: 'Intermediário' },
       { name: 'Crucifixo no Cabo', muscleGroup: 'Peito', equipment: 'Cabos', description: 'Em pé entre duas polias, puxe os cabos em arco à frente do peito.', difficulty: 'Intermediário' },
       { name: 'Crossover', muscleGroup: 'Peito', equipment: 'Cabos', description: 'Em pé entre as polias altas, cruze os cabos à frente do corpo contraindo o peito.', difficulty: 'Intermediário' },
-      { name: 'Flexão de Braço', muscleGroup: 'Peito', equipment: 'Nenhum', description: 'Apoie as mãos no chão na largura dos ombros e flexione os braços descendo o corpo.', difficulty: 'Iniciante' },
-      { name: 'Mergulho em Paralelas', muscleGroup: 'Peito', equipment: 'Paralelas', description: 'Apoie-se nas barras paralelas e desça o corpo inclinando o tronco à frente.', difficulty: 'Avançado' },
+      { name: 'Flexão de Braço', muscleGroup: 'Peito/Tríceps', equipment: 'Nenhum', description: 'Apoie as mãos no chão na largura dos ombros e flexione os braços descendo o corpo.', difficulty: 'Iniciante' },
+      { name: 'Mergulho em Paralelas', muscleGroup: 'Peito/Tríceps', equipment: 'Paralelas', description: 'Apoie-se nas barras paralelas e desça o corpo inclinando o tronco à frente.', difficulty: 'Avançado' },
       { name: 'Peck Deck (Voador)', muscleGroup: 'Peito', equipment: 'Máquina', description: 'Sentado na máquina, feche os braços contraindo o peitoral.', difficulty: 'Iniciante' },
 
       // === COSTAS ===
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       { name: 'Remada Cavalinha (T-Bar Row)', muscleGroup: 'Costas', equipment: 'Barra T', description: 'Incline o tronco e puxe a barra T em direção ao peito.', difficulty: 'Intermediário' },
       { name: 'Remada Baixa no Cabo', muscleGroup: 'Costas', equipment: 'Cabos', description: 'Sentado, puxe o cabo em direção ao abdômen mantendo as costas retas.', difficulty: 'Iniciante' },
       { name: 'Barra Fixa (Pull-up)', muscleGroup: 'Costas', equipment: 'Barra Fixa', description: 'Pendure-se na barra com pegada pronada e puxe o corpo até o queixo passar a barra.', difficulty: 'Avançado' },
-      { name: 'Levantamento Terra (Deadlift)', muscleGroup: 'Costas', equipment: 'Barra', description: 'Pés na largura dos quadris, segure a barra. Levante mantendo as costas retas até ficar em pé.', difficulty: 'Avançado' },
+      { name: 'Levantamento Terra (Deadlift)', muscleGroup: 'Costas/Posterior', equipment: 'Barra', description: 'Pés na largura dos quadris, segure a barra. Levante mantendo as costas retas até ficar em pé.', difficulty: 'Avançado' },
       { name: 'Pullover com Halter', muscleGroup: 'Costas', equipment: 'Halter e Banco', description: 'Deitado no banco, segure o halter acima do peito e leve atrás da cabeça em arco.', difficulty: 'Intermediário' },
 
       // === OMBROS ===
@@ -114,29 +114,29 @@ export async function POST(request: Request) {
       { name: 'Tríceps na Paralela', muscleGroup: 'Tríceps', equipment: 'Paralelas', description: 'Nas barras paralelas com tronco ereto, desça e suba focando no tríceps.', difficulty: 'Avançado' },
 
       // === QUADRÍCEPS ===
-      { name: 'Agachamento Livre (Squat)', muscleGroup: 'Quadríceps', equipment: 'Barra', description: 'Posicione a barra nos trapézios, pés na largura dos ombros. Desça até as coxas ficarem paralelas ao chão.', difficulty: 'Intermediário' },
-      { name: 'Agachamento Frontal (Front Squat)', muscleGroup: 'Quadríceps', equipment: 'Barra', description: 'Barra apoiada nos deltóides frontais, agache mantendo o tronco ereto.', difficulty: 'Avançado' },
-      { name: 'Agachamento Hack (Hack Squat)', muscleGroup: 'Quadríceps', equipment: 'Máquina Hack', description: 'Na máquina hack, posicione os ombros nos apoios e agache.', difficulty: 'Intermediário' },
-      { name: 'Agachamento Búlgaro (Bulgarian Split Squat)', muscleGroup: 'Quadríceps', equipment: 'Halteres e Banco', description: 'Apoie um pé no banco atrás e agache com a perna da frente.', difficulty: 'Intermediário' },
-      { name: 'Agachamento com Halter Goblet (Goblet Squat)', muscleGroup: 'Quadríceps', equipment: 'Halter ou Kettlebell', description: 'Segure o halter junto ao peito e agache.', difficulty: 'Iniciante' },
-      { name: 'Leg Press 45°', muscleGroup: 'Quadríceps', equipment: 'Leg Press', description: 'Sentado na máquina, posicione os pés na plataforma e empurre.', difficulty: 'Iniciante' },
+      { name: 'Agachamento Livre (Squat)', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Barra', description: 'Posicione a barra nos trapézios, pés na largura dos ombros. Desça até as coxas ficarem paralelas ao chão.', difficulty: 'Intermediário' },
+      { name: 'Agachamento Frontal (Front Squat)', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Barra', description: 'Barra apoiada nos deltóides frontais, agache mantendo o tronco ereto.', difficulty: 'Avançado' },
+      { name: 'Agachamento Hack (Hack Squat)', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Máquina Hack', description: 'Na máquina hack, posicione os ombros nos apoios e agache.', difficulty: 'Intermediário' },
+      { name: 'Agachamento Búlgaro (Bulgarian Split Squat)', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Halteres e Banco', description: 'Apoie um pé no banco atrás e agache com a perna da frente.', difficulty: 'Intermediário' },
+      { name: 'Agachamento com Halter Goblet (Goblet Squat)', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Halter ou Kettlebell', description: 'Segure o halter junto ao peito e agache.', difficulty: 'Iniciante' },
+      { name: 'Leg Press 45°', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Leg Press', description: 'Sentado na máquina, posicione os pés na plataforma e empurre.', difficulty: 'Iniciante' },
       { name: 'Cadeira Extensora', muscleGroup: 'Quadríceps', equipment: 'Máquina', description: 'Sentado na máquina, estenda os joelhos elevando o peso.', difficulty: 'Iniciante' },
-      { name: 'Passada', muscleGroup: 'Quadríceps', equipment: 'Halteres ou Barra', description: 'Dê um passo à frente e flexione ambos os joelhos a 90°.', difficulty: 'Intermediário' },
-      { name: 'Avanço', muscleGroup: 'Quadríceps', equipment: 'Halteres ou Barra', description: 'Passada caminhando, alternando as pernas a cada repetição.', difficulty: 'Intermediário' },
+      { name: 'Passada', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Halteres ou Barra', description: 'Dê um passo à frente e flexione ambos os joelhos a 90°.', difficulty: 'Intermediário' },
+      { name: 'Avanço', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Halteres ou Barra', description: 'Passada caminhando, alternando as pernas a cada repetição.', difficulty: 'Intermediário' },
 
       // === POSTERIOR DE COXA ===
-      { name: 'Stiff', muscleGroup: 'Posterior', equipment: 'Barra ou Halteres', description: 'Em pé, desça o tronco mantendo as pernas semi-estendidas.', difficulty: 'Intermediário' },
+      { name: 'Stiff', muscleGroup: 'Posterior/Lombar', equipment: 'Barra ou Halteres', description: 'Em pé, desça o tronco mantendo as pernas semi-estendidas.', difficulty: 'Intermediário' },
       { name: 'Mesa Flexora', muscleGroup: 'Posterior', equipment: 'Máquina', description: 'Deitado de bruços na máquina, flexione os joelhos elevando o peso.', difficulty: 'Iniciante' },
       { name: 'Cadeira Flexora', muscleGroup: 'Posterior', equipment: 'Máquina', description: 'Sentado na máquina, flexione os joelhos puxando o peso.', difficulty: 'Iniciante' },
-      { name: 'Levantamento Terra Romeno (Romanian Deadlift)', muscleGroup: 'Posterior', equipment: 'Barra', description: 'Em pé, desça a barra mantendo próxima às pernas com leve flexão dos joelhos.', difficulty: 'Intermediário' },
-      { name: 'Bom Dia (Good Morning)', muscleGroup: 'Posterior', equipment: 'Barra', description: 'Barra nos trapézios, incline o tronco à frente mantendo as costas retas.', difficulty: 'Intermediário' },
+      { name: 'Levantamento Terra Romeno (Romanian Deadlift)', muscleGroup: 'Posterior/Glúteos', equipment: 'Barra', description: 'Em pé, desça a barra mantendo próxima às pernas com leve flexão dos joelhos.', difficulty: 'Intermediário' },
+      { name: 'Bom Dia (Good Morning)', muscleGroup: 'Posterior/Lombar', equipment: 'Barra', description: 'Barra nos trapézios, incline o tronco à frente mantendo as costas retas.', difficulty: 'Intermediário' },
 
       // === GLÚTEOS ===
-      { name: 'Hip Thrust', muscleGroup: 'Glúteos', equipment: 'Barra e Banco', description: 'Apoie as costas no banco, barra sobre o quadril. Eleve o quadril contraindo os glúteos.', difficulty: 'Intermediário' },
+      { name: 'Hip Thrust', muscleGroup: 'Glúteos/Posterior', equipment: 'Barra e Banco', description: 'Apoie as costas no banco, barra sobre o quadril. Eleve o quadril contraindo os glúteos.', difficulty: 'Intermediário' },
       { name: 'Glúteo no Cabo', muscleGroup: 'Glúteos', equipment: 'Cabos', description: 'Na polia baixa, estenda a perna para trás contra a resistência do cabo.', difficulty: 'Iniciante' },
       { name: 'Elevação Pélvica', muscleGroup: 'Glúteos', equipment: 'Nenhum', description: 'Deitado com os pés no chão, eleve o quadril contraindo os glúteos.', difficulty: 'Iniciante' },
       { name: 'Abdução de Quadril na Máquina', muscleGroup: 'Glúteos', equipment: 'Máquina', description: 'Sentado na máquina, abra as pernas contra a resistência.', difficulty: 'Iniciante' },
-      { name: 'Agachamento Sumô', muscleGroup: 'Glúteos', equipment: 'Halter ou Barra', description: 'Pés bem afastados, ponteiras para fora, agache segurando o peso.', difficulty: 'Intermediário' },
+      { name: 'Agachamento Sumô', muscleGroup: 'Glúteos/Quadríceps', equipment: 'Halter ou Barra', description: 'Pés bem afastados, ponteiras para fora, agache segurando o peso.', difficulty: 'Intermediário' },
 
       // === PANTURRILHA ===
       { name: 'Panturrilha em Pé', muscleGroup: 'Panturrilha', equipment: 'Máquina ou Step', description: 'Em pé na máquina ou step, eleve os calcanhares o máximo possível.', difficulty: 'Iniciante' },
@@ -159,6 +159,13 @@ export async function POST(request: Request) {
       { name: 'Roda Abdominal', muscleGroup: 'Core', equipment: 'Roda Abdominal', description: 'Ajoelhado, role a roda à frente estendendo o corpo e retorne.', difficulty: 'Avançado' },
       { name: 'Pallof Press', muscleGroup: 'Core', equipment: 'Cabos', description: 'Em pé ao lado da polia, estenda os braços à frente resistindo à rotação.', difficulty: 'Intermediário' },
 
+      // === LOMBAR ===
+      { name: 'Hiperextensão', muscleGroup: 'Lombar', equipment: 'Banco Romano', description: 'No banco romano, desça o tronco e retorne contraindo a lombar e os eretores da espinha.', difficulty: 'Iniciante' },
+      { name: 'Hiperextensão Reversa', muscleGroup: 'Lombar/Glúteos', equipment: 'Banco ou Máquina', description: 'Apoie o tronco no banco e eleve as pernas para trás contraindo lombar e glúteos.', difficulty: 'Intermediário' },
+      { name: 'Superman', muscleGroup: 'Lombar/Core', equipment: 'Nenhum', description: 'Deitado de bruços, eleve simultaneamente braços e pernas do chão.', difficulty: 'Iniciante' },
+      { name: 'Extensão Lombar na Máquina', muscleGroup: 'Lombar', equipment: 'Máquina', description: 'Sentado na máquina, empurre para trás estendendo a coluna contra a resistência.', difficulty: 'Iniciante' },
+      { name: 'Bird Dog', muscleGroup: 'Lombar/Core', equipment: 'Nenhum', description: 'De quatro apoios, estenda simultaneamente o braço e a perna opostos mantendo o equilíbrio.', difficulty: 'Iniciante' },
+
       // === TRAPÉZIO ===
       { name: 'Encolhimento com Barra', muscleGroup: 'Trapézio', equipment: 'Barra', description: 'Em pé, segure a barra e eleve os ombros em direção às orelhas.', difficulty: 'Iniciante' },
       { name: 'Encolhimento com Halteres', muscleGroup: 'Trapézio', equipment: 'Halteres', description: 'Em pé com halteres, eleve os ombros contraindo o trapézio.', difficulty: 'Iniciante' },
@@ -174,6 +181,22 @@ export async function POST(request: Request) {
       { name: 'Clean and Press (Arremesso e Desenvolvimento)', muscleGroup: 'Corpo Inteiro', equipment: 'Barra', description: 'Puxe a barra do chão até os ombros e pressione acima da cabeça.', difficulty: 'Avançado' },
       { name: 'Mountain Climber (Escalador)', muscleGroup: 'Corpo Inteiro', equipment: 'Nenhum', description: 'Na posição de prancha, alterne os joelhos em direção ao peito rapidamente.', difficulty: 'Intermediário' },
       { name: 'Turkish Get-Up (Levantamento Turco)', muscleGroup: 'Corpo Inteiro', equipment: 'Kettlebell ou Halter', description: 'Deitado segurando o peso com um braço estendido, levante-se mantendo o braço acima.', difficulty: 'Avançado' },
+
+      // === EXERCÍCIOS ADICIONAIS ===
+      { name: 'Supino na Máquina', muscleGroup: 'Peito', equipment: 'Máquina', description: 'Sentado na máquina de supino, empurre as barras à frente contraindo o peitoral.', difficulty: 'Iniciante' },
+      { name: 'Remada na Máquina', muscleGroup: 'Costas', equipment: 'Máquina', description: 'Sentado na máquina, puxe os pegadores em direção ao abdômen.', difficulty: 'Iniciante' },
+      { name: 'Desenvolvimento na Máquina', muscleGroup: 'Ombros', equipment: 'Máquina', description: 'Sentado na máquina de ombro, pressione as barras para cima.', difficulty: 'Iniciante' },
+      { name: 'Cadeira Adutora', muscleGroup: 'Glúteos/Posterior', equipment: 'Máquina', description: 'Sentado na máquina, feche as pernas contra a resistência trabalhando os adutores.', difficulty: 'Iniciante' },
+      { name: 'Cadeira Abdutora', muscleGroup: 'Glúteos', equipment: 'Máquina', description: 'Sentado na máquina, abra as pernas contra a resistência trabalhando os abdutores.', difficulty: 'Iniciante' },
+      { name: 'Step-Up', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Step ou Banco', description: 'Suba em um step ou banco alternando as pernas, empurrando com o calcanhar.', difficulty: 'Intermediário' },
+      { name: 'Agachamento no Smith', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Smith Machine', description: 'Na barra guiada do Smith, posicione os pés à frente e agache.', difficulty: 'Iniciante' },
+      { name: 'Afundo Lateral', muscleGroup: 'Quadríceps/Glúteos', equipment: 'Halteres', description: 'Dê um passo largo para o lado, flexionando o joelho e mantendo a outra perna estendida.', difficulty: 'Intermediário' },
+      { name: 'Rosca Bayesian', muscleGroup: 'Bíceps', equipment: 'Cabos', description: 'De costas para a polia alta, flexione o braço com total amplitude atrás do corpo.', difficulty: 'Intermediário' },
+      { name: 'Tríceps Sobre a Cabeça com Corda', muscleGroup: 'Tríceps', equipment: 'Cabo/Corda', description: 'De costas para a polia baixa, estenda os braços acima da cabeça com a corda.', difficulty: 'Intermediário' },
+      { name: 'Crucifixo Inclinado com Halteres', muscleGroup: 'Peito', equipment: 'Halteres e Banco Inclinado', description: 'No banco inclinado, abra os braços em arco amplo focando no peitoral superior.', difficulty: 'Intermediário' },
+      { name: 'Puxada Frontal Pegada Neutra', muscleGroup: 'Costas', equipment: 'Pulley', description: 'Sentado no pulley com pegada neutra (paralela), puxe até o peito.', difficulty: 'Iniciante' },
+      { name: 'Remada Alta com Halteres', muscleGroup: 'Ombros/Trapézio', equipment: 'Halteres', description: 'Em pé, puxe os halteres rente ao corpo até a altura do queixo.', difficulty: 'Intermediário' },
+      { name: 'Face Pull com Rotação Externa', muscleGroup: 'Ombros/Trapézio', equipment: 'Cabos', description: 'Na polia alta, puxe a corda e gire os braços para fora ao final do movimento.', difficulty: 'Intermediário' },
     ];
 
     const exerciseIds: Record<string, string> = {};

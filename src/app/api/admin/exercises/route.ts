@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     args.push(`%${search}%`, `%${search}%`);
   }
   if (muscleGroup) {
-    sql += " AND e.muscle_group = ?";
-    args.push(muscleGroup);
+    sql += " AND e.muscle_group LIKE ?";
+    args.push(`%${muscleGroup}%`);
   }
 
   sql += " ORDER BY e.created_at DESC";

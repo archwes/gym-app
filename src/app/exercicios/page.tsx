@@ -7,10 +7,14 @@ import PageHeader from '@/components/ui/PageHeader';
 import { BookOpen, Search, Dumbbell } from 'lucide-react';
 import type { MuscleGroup, Exercise } from '@/types';
 
+function getExerciseGroups(muscleGroup: string): string[] {
+  return muscleGroup.split('/').map(g => g.trim());
+}
+
 const muscleGroups: MuscleGroup[] = [
   'Peito', 'Costas', 'Ombros', 'Bíceps', 'Tríceps',
   'Quadríceps', 'Posterior', 'Glúteos', 'Panturrilha',
-  'Abdômen', 'Core', 'Trapézio', 'Antebraço', 'Corpo Inteiro',
+  'Abdômen', 'Core', 'Lombar', 'Trapézio', 'Antebraço', 'Corpo Inteiro',
 ];
 
 const difficultyColors: Record<string, string> = {
@@ -31,6 +35,7 @@ const muscleGroupEmojis: Record<MuscleGroup, string> = {
   'Panturrilha': '🦵',
   'Abdômen': '🔥',
   'Core': '⚡',
+  'Lombar': '🔙',
   'Trapézio': '🔺',
   'Antebraço': '✊',
   'Corpo Inteiro': '🏃',
@@ -57,15 +62,18 @@ export default function ExerciciosPage() {
   const filteredExercises = exercises.filter((ex) => {
     const matchesSearch = ex.name.toLowerCase().includes(search.toLowerCase()) ||
       ex.muscle_group.toLowerCase().includes(search.toLowerCase());
-    const matchesGroup = selectedGroup === 'all' || ex.muscle_group === selectedGroup;
+    const matchesGroup = selectedGroup === 'all' || getExerciseGroups(ex.muscle_group).includes(selectedGroup);
     const matchesDiff = selectedDifficulty === 'all' || ex.difficulty === selectedDifficulty;
     return matchesSearch && matchesGroup && matchesDiff;
   });
 
-  // Group exercises by muscle group
+  // Group exercises by muscle group (multi-category exercises appear in each group)
   const groupedExercises = filteredExercises.reduce((acc, ex) => {
-    if (!acc[ex.muscle_group]) acc[ex.muscle_group] = [];
-    acc[ex.muscle_group].push(ex);
+    const groups = getExerciseGroups(ex.muscle_group);
+    for (const g of groups) {
+      if (!acc[g]) acc[g] = [];
+      acc[g].push(ex);
+    }
     return acc;
   }, {} as Record<string, Exercise[]>);
 
@@ -125,7 +133,7 @@ export default function ExerciciosPage() {
           Todos
         </button>
         {muscleGroups.map((g) => {
-          const count = exercises.filter((e) => e.muscle_group === g).length;
+          const count = exercises.filter((e) => getExerciseGroups(e.muscle_group).includes(g)).length;
           if (count === 0) return null;
           return (
             <button
@@ -153,7 +161,7 @@ export default function ExerciciosPage() {
               {group}
               <span className="text-xs text-gray font-normal">({groupExercises.length})</span>
             </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 items-start">
               {groupExercises.map((ex) => (
                 <ExerciseCard
                   key={ex.id}
@@ -166,7 +174,7 @@ export default function ExerciciosPage() {
           </div>
         ))
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 items-start">
           {filteredExercises.map((ex) => (
             <ExerciseCard
               key={ex.id}
@@ -215,8 +223,8 @@ function ExerciseCard({
           </span>
         </div>
         <h3 className="font-bold text-sm text-gray-lighter mb-1">{exercise.name}</h3>
-        <div className="flex items-center gap-2 text-xs text-gray">
-          <span>{muscleGroupEmojis[exercise.muscle_group]}</span>
+        <div className="flex items-center gap-2 text-xs text-gray flex-wrap">
+          <span>{muscleGroupEmojis[getExerciseGroups(exercise.muscle_group)[0] as MuscleGroup]}</span>
           <span>{exercise.muscle_group}</span>
           <span>·</span>
           <span>{exercise.equipment}</span>

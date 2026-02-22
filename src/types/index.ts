@@ -16,7 +16,7 @@ export interface User {
 export interface Exercise {
   id: string;
   name: string;
-  muscle_group: MuscleGroup;
+  muscle_group: string;
   equipment: string;
   description: string;
   difficulty: 'Iniciante' | 'Intermediário' | 'Avançado';
@@ -113,6 +113,7 @@ export type MuscleGroup =
   | 'Panturrilha'
   | 'Abdômen'
   | 'Core'
+  | 'Lombar'
   | 'Trapézio'
   | 'Antebraço'
   | 'Corpo Inteiro';

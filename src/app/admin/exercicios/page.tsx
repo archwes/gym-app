@@ -28,7 +28,7 @@ import {
 const muscleGroups: MuscleGroup[] = [
   'Peito', 'Costas', 'Ombros', 'Bíceps', 'Tríceps',
   'Quadríceps', 'Posterior', 'Glúteos', 'Panturrilha',
-  'Abdômen', 'Core', 'Trapézio', 'Antebraço', 'Corpo Inteiro',
+  'Abdômen', 'Core', 'Lombar', 'Trapézio', 'Antebraço', 'Corpo Inteiro',
 ];
 
 const difficulties = ['Iniciante', 'Intermediário', 'Avançado'] as const;
@@ -83,7 +83,7 @@ export default function AdminExerciciosPage() {
   const openCreate = () => { resetForm(); setShowModal(true); };
   const openEdit = (ex: Exercise) => {
     resetForm(); setEditing(ex);
-    setFormName(ex.name); setFormMuscle(ex.muscle_group);
+    setFormName(ex.name); setFormMuscle(ex.muscle_group as MuscleGroup);
     setFormEquipment(ex.equipment); setFormDescription(ex.description);
     setFormDifficulty(ex.difficulty); setShowModal(true);
   };

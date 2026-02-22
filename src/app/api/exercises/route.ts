@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   let sql = 'SELECT * FROM exercises WHERE 1=1';
   const params: (string | null)[] = [];
 
-  if (muscle_group) { sql += ' AND muscle_group = ?'; params.push(muscle_group); }
+  if (muscle_group) { sql += ' AND muscle_group LIKE ?'; params.push(`%${muscle_group}%`); }
   if (difficulty) { sql += ' AND difficulty = ?'; params.push(difficulty); }
   if (search) { sql += ' AND (name LIKE ? OR description LIKE ?)'; params.push(`%${search}%`, `%${search}%`); }
   sql += ' ORDER BY name';
