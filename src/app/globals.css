@@ -41,6 +41,14 @@ input, select, textarea {
   color-scheme: dark;
 }
 
+/* Prevent date/time picker overlay clipping */
+input[type="date"],
+input[type="time"] {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
 /* Scale auth form inputs on desktop */
 .glass input,
 .glass select,

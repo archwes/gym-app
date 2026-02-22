@@ -246,7 +246,7 @@ export default function SessionDetailPage() {
             {editing ? (
               <div className="space-y-4">
                 {/* Date and Time */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Data</label>
                     <input
