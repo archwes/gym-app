@@ -390,7 +390,7 @@ export default function StudentProfilePage() {
               value={progressForm.date}
               onChange={e => setProgressForm({ ...progressForm, date: e.target.value })}
               required
-              className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+              className="w-full sm:max-w-[200px] bg-dark border border-dark-lighter rounded-lg px-2.5 py-1.5 text-[13px] text-gray-lighter focus:outline-none focus:border-primary"
             />
           </div>
 

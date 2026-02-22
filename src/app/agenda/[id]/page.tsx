@@ -246,14 +246,14 @@ export default function SessionDetailPage() {
             {editing ? (
               <div className="space-y-4">
                 {/* Date and Time */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray mb-1.5">Data</label>
                     <input
                       type="date"
                       value={editDate}
                       onChange={(e) => setEditDate(e.target.value)}
-                      className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+                      className="w-full bg-dark border border-dark-lighter rounded-lg px-2.5 py-1.5 text-[13px] text-gray-lighter focus:outline-none focus:border-primary"
                     />
                   </div>
                   <div>
@@ -262,7 +262,7 @@ export default function SessionDetailPage() {
                       type="time"
                       value={editTime}
                       onChange={(e) => setEditTime(e.target.value)}
-                      className="w-full bg-dark border border-dark-lighter rounded-xl px-3 py-2.5 text-sm text-gray-lighter focus:outline-none focus:border-primary"
+                      className="w-full bg-dark border border-dark-lighter rounded-lg px-2.5 py-1.5 text-[13px] text-gray-lighter focus:outline-none focus:border-primary"
                     />
                   </div>
                 </div>
